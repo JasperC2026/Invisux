@@ -17,181 +17,6 @@ animation_end() {
     BLA::stop_loading_animation
 }
 
-# Menu 
-set -u
-
-declare -A CATEGORIES=(
-    [1]="test"
-    [2]="test"
-)
-CATEGORY_ORDER=(1 2)
-
-TEST1_ITEMS=(
-
-)
-TEST2_ITEMS=(
-
-)
-
-_MENU_BREADCRUMB=()
-
-_cleanup_menu() {
-    tput cnorm 2>/dev/null
-    echo
-}
-trap _cleanup_menu EXIT INT TERM
-
-_render_menu() {
-    local title="$1"
-    local selected="$2"
-    shift 2
-    local items=("$@")
-
-    clear
-    if [ "${#_MENU_BREADCRUMB[@]}" -gt 0 ]; then
-        tput setaf 8
-        local IFS=' > '
-        echo "${_MENU_BREADCRUMB[*]}"
-        tput sgr0
-        echo
-    fi
-
-    tput bold
-    echo "$title"
-    tput sgr0
-    echo
-
-    local i=0
-    for entry in "${items[@]}"; do
-        local label="${entry%%|*}"
-        local target="${entry#*|}"
-
-        if [[ "$target" == "__separator__" ]]; then
-            tput setaf 8
-            echo "  $label"
-            tput sgr0
-        elif [ "$i" -eq "$selected" ]; then
-            tput setaf 2
-            echo "> $label"
-            tput sgr0
-        else
-            echo "  $label"
-        fi
-        ((i++))
-    done
-
-    echo
-    tput setaf 8
-    echo "↑/↓ move   Enter select   q back/quit"
-    tput sgr0
-}
-select_from_menu() {
-    local title="$1"
-    shift
-    local items=("$@")
-    local count="${#items[@]}"
-    local selected=0
-
-    # land selection on first non-separator item
-    while [[ "${items[$selected]#*|}" == "__separator__" ]]; do
-        ((selected++))
-    done
-
-    tput civis
-
-    while true; do
-        _render_menu "$title" "$selected" "${items[@]}"
-
-        IFS= read -rsn1 key
-        case "$key" in
-            $'\x1b')
-                read -rsn2 -t 0.01 key
-                case "$key" in
-                    '[A') # up
-                        local new=$selected
-                        repeat=0
-                        while [ "$repeat" -lt "$count" ]; do
-                            ((new--)); [ "$new" -lt 0 ] && new=$((count - 1))
-                            [[ "${items[$new]#*|}" != "__separator__" ]] && break
-                            ((repeat++))
-                        done
-                        selected=$new
-                        ;;
-                    '[B') # down
-                        local new=$selected
-                        repeat=0
-                        while [ "$repeat" -lt "$count" ]; do
-                            ((new++)); [ "$new" -ge "$count" ] && new=0
-                            [[ "${items[$new]#*|}" != "__separator__" ]] && break
-                            ((repeat++))
-                        done
-                        selected=$new
-                        ;;
-                esac
-                ;;
-            "q"|"Q")
-                REPLY_TARGET="__back__"
-                tput cnorm
-                return
-                ;;
-            "")
-                REPLY_TARGET="${items[$selected]#*|}"
-                REPLY_LABEL="${items[$selected]%%|*}"
-                tput cnorm
-                return
-                ;;
-        esac
-    done
-}
-dispatch() {
-    local fn="$1"
-    if declare -f "$fn" >/dev/null; then
-        clear
-        "$fn"
-        echo
-        read -rsn1 -p "Press any key to return to the menu..."
-    else
-        clear
-        tput setaf 1
-        echo "Function '$fn' is not defined yet."
-        tput sgr0
-        read -rsn1 -p "Press any key to return to the menu..."
-    fi
-}
-open_category() {
-    local title="$1"
-    local -n items_ref="$2"
-
-    _MENU_BREADCRUMB+=("$title")
-
-    while true; do
-        select_from_menu "$title" "${items_ref[@]}"
-        if [[ "$REPLY_TARGET" == "__back__" ]]; then
-            break
-        fi
-        dispatch "$REPLY_TARGET"
-    done
-
-    unset '_MENU_BREADCRUMB[-1]'
-}
-menu () {
-    local cat_items=()
-    for key in "${CATEGORY_ORDER[@]}"; do
-        cat_items+=("${CATEGORIES[$key]}|cat_$key")
-    done
-
-    while true; do
-        _MENU_BREADCRUMB=("Main Menu")
-        select_from_menu "Main Menu" "${cat_items[@]}"
-
-        case "$REPLY_TARGET" in
-            __back__) clear; echo "Goodbye."; break ;;
-            cat_1) open_category "test"             TEST1_ITEMS ;;
-            cat_2) open_category "test"             TEST2_ITEMS  ;;
-        esac
-    done
-}
-
 # Variables
 
 # Colors for ASCII art and use in output messages
@@ -206,6 +31,20 @@ WHITE="\e[97m"
 BLACK="\e[30m"   
 BOLD="\e[1m"
 RESET="\e[0m"
+
+help () {
+    if [[ -z "$1" ]]; then
+        _invisux_main_command
+        return 0
+    fi
+
+    case "$1" in
+        *)
+            echo -e "${RED}[!] No help entry for '$1'.${RESET}"
+            return 1
+            ;;
+    esac
+}
 
 # Command dispatcher
 _INVISUX_COMMANDS=(
