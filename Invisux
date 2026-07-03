@@ -32,6 +32,7 @@ BLACK="\e[30m"
 BOLD="\e[1m"
 RESET="\e[0m"
 
+# Basics
 help () {
     if [[ -z "$1" ]]; then
         _invisux_main_command
@@ -45,16 +46,42 @@ help () {
             ;;
     esac
 }
-
+info() {
+    echo "test"
+}
+license() {
+    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
+}
 # Command dispatcher
 _INVISUX_COMMANDS=(
-    # Future commands come here
+    license
+    help
 )
 
 # Main command
-_invisux_main_command={
-
+_invisux_main_command() {
+    cat << 'EOF' # Banner
+EOF
+    
+    echo ""
+    
+    sleep 2
+    
+    gum_main_option=$(gum choose info license exit)
+    
+    case $gum_main_option in
+        info)
+            info
+            ;;
+        license)
+            license
+            ;;
+        exit)
+            return 0
+            ;;
+    esac
 }
+
 # Command handler
     if [[ $# -eq 0 ]]; then
        _invisux_main_command
