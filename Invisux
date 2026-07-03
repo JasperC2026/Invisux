@@ -4,7 +4,6 @@
 # You are free to use, copy, modify, and distribute this software for any purpose.
 # With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
 # You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
-# Version: 0.1 Pre-Alpha
 
 # Loading animations source
 source /usr/local/bin/invisux_loading.sh 
@@ -18,6 +17,32 @@ animation_end() {
 }
 
 # Variables
+written_in="Bash/shell"
+total_commands="2"
+created_on="2 July, 2026"
+contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
+license="GPL-3.0"
+lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
+type="Pre-Alpha"
+version="V0.0.2"
+release_date="3-7-2026"
+test_date="None"
+install_path=$(command -v peregine 2>/dev/null || echo "not installed")
+installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
+shell_info="$( basename "$SHELL" ) $BASH_VERSION"
+platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
+_deps=(gum)
+_deps_met=0
+
+for _d in "${_deps[@]}"; do command -v "$_d" &>/dev/null && (( _deps_met++ )); done
+deps_status="${_deps_met}/${#_deps[@]} found"
+unset _deps _deps_met _d
+
+DIVIDER="───────────────────────────────────────────────────────────────"
+status_negative="${RED}[!]${RESET}"
+status_positive="${GREEN}[✔]${RESET}"
+forward="${GREEN}[➜]${RESET}" 
+arrow="➜"
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
