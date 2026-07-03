@@ -72,8 +72,45 @@ help () {
     esac
 }
 info() {
-    echo "test"
+    local BOLD='\033[1m'
+    local RESET='\033[0m'
+    local DIM='\033[2m'
+    local CLOGO='\033[38;5;255m'   # white  — logo @'s
+    local CLABEL='\e[0;35m'         # purple   — info labels
+    local CVAL='\033[38;5;250m'    # grey   — info values
+    local CSEP='\033[38;5;240m'    # dim    — separators / title version
+    
+    printf "\n"
+    printf "${CLABEL}${BOLD}  Invisux${RESET}\n"
+    printf "${DIM}  Linux Privacy Toolkit${RESET}\n"
+    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
+    printf "\n"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Version" "${type} ${version}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Language" "${written_in}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "License" "${license}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Created" "${created_on}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Release date" "${release_date}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Installed" "${installed}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Install path" "${install_path}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Shell" "${shell_info}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Platform" "${platform}"
+    printf "\n"
+    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
+    printf "\n"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Dependencies" "${deps_status}"
+    printf "\n"
+    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
+    printf "\n"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Total commands" "${total_commands}"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Lines of code" "${lines_of_code}"
+    printf "\n"
+    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
+    printf "\n"
+    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Test date" "${test_date}"
+    printf "\n"
+    printf "${CSEP}  ───────────────────────────────────────${RESET}\n\n"
 }
+
 license() {
     curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
 }
