@@ -60,11 +60,18 @@ _INVISUX_COMMANDS=(
 
 # Main command
 _invisux_main_command() {
+    echo -e "${BOLD}${PURPLE}"
+
     cat << 'EOF' # Banner
+IIIII NN   NN VV     VV IIIII  SSSSS  UU   UU XX    XX 
+ III  NNN  NN VV     VV  III  SS      UU   UU  XX  XX  
+ III  NN N NN  VV   VV   III   SSSSS  UU   UU   XXXX   
+ III  NN  NNN   VV VV    III       SS UU   UU  XX  XX  
+IIIII NN   NN    VVV    IIIII  SSSSS   UUUUU  XX    XX 
 EOF
     
-    echo ""
-    
+    echo -e "${RESET}                Linux Privacy Toolkit"
+    echo "                 Created by: JasperC" 
     sleep 2
     
     gum_main_option=$(gum choose info license exit)
