@@ -99,16 +99,16 @@ keys() {
 
     case $key_size in
         128-bit)
-        key=$(openssl rand -hex 16)
+            key=$(openssl rand -hex 16)
         ;;
         192-bit)
-        key=$(openssl rand -hex 24)
+            key=$(openssl rand -hex 24)
         ;;
         256-bit)
-        key=$(openssl rand -hex 32)
+            key=$(openssl rand -hex 32)
         ;;
         512-bit)
-        key=$(openssl rand -hex 64)
+            key=$(openssl rand -hex 64)
         ;;
     esac
 
@@ -137,7 +137,78 @@ aes_menu() {
     echo "test"
 }
 gpg_menu() {
-    echo "test"
+    gpg_options=$(gum choose generate-key delete-key import-key export-key list-keys sign verify)
+
+    case $gpg_options in
+        generate-key)
+            generate-key
+        ;;
+        delete-key)
+            delete-key
+        ;;
+        import-key)
+            import-key
+        ;;
+        export-key)
+            export-key
+        ;;
+        list-keys)
+            list-keys
+        ;;
+        sign)
+            sign
+        ;;
+        verify)
+            verify
+        ;;
+    esac
+}
+generate-key() {
+    gpg --gen-key
+} 
+delete-key() {
+    read -p "Username:  " username
+    echo "Enter kind of key:    "
+    answer=$(gum choose public private)
+
+    case $answer in
+        public)
+            gpg --delete-key $username 
+        ;;
+        private)
+            gpg --delete-secret-key $username
+        ;;
+    esac
+}
+import-key() {
+    echo "Select a file:    "
+    file=$(gum file)
+
+    gpg --import $file
+} 
+export-key() {
+    read -p "Enter your username:   " username
+    read -p "Enter file to write to (no extension added):    " file
+
+    gpg --export -a $username $file.key
+} 
+list-keys() {
+    echo "Public:   "
+    gpg --list-keys
+    echo "Secret:   "
+    gpg --list-secret-keys
+} 
+sign() {
+    echo "Select a file:    "
+    file=$(gum file)
+
+    gpg --sign $file
+}
+verify() {
+    echo "Select a file:    "
+    file=$(gum file)
+
+	gpg --verify $file
 }
 help () {
     if [[ -z "$1" ]]; then
