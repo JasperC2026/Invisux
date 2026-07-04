@@ -39,7 +39,7 @@ install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
 shell_info="$( basename "$SHELL" ) $BASH_VERSION"
 platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
-_deps=(gum)
+_deps=(gum openssl)
 _deps_met=0
 
 for _d in "${_deps[@]}"; do command -v "$_d" &>/dev/null && (( _deps_met++ )); done
@@ -69,12 +69,12 @@ RESET="\e[0m"
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG Exit)
     
-    case $gum_main_option in
+    case $gum_encryption_menu in
         Explainer)
             explainer_encryption
             ;;
         General-keys)
-            general-keys
+            keys
             ;;
         AES)
             aes_menu
@@ -89,8 +89,9 @@ encryption_menu() {
 }
 
 explainer_encryption() {
+    echo "test"
 }
-general-keys() {
+keys() {
     key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
     echo "You selected $key_size as your key size"
 
@@ -118,10 +119,25 @@ general-keys() {
     animation_end
 
     echo "Here is your key: $key"
+    echo "Want to save it to a file?"
+
+    saving_to_file=$(gum choose yes no)
+
+    case $saving_to_file in
+        yes)
+        read -p "Enter file name:   " file
+        echo -n "$key" >> $file
+        ;;
+        no)
+        return 0
+        ;;
+    esac
 }
 aes_menu() {
+    echo "test"
 }
 gpg_menu() {
+    echo "test"
 }
 help () {
     if [[ -z "$1" ]]; then
