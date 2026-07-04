@@ -39,7 +39,7 @@ install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
 shell_info="$( basename "$SHELL" ) $BASH_VERSION"
 platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
-_deps=(gum openssl)
+_deps=(gum openssl shred)
 _deps_met=0
 
 for _d in "${_deps[@]}"; do command -v "$_d" &>/dev/null && (( _deps_met++ )); done
@@ -134,8 +134,202 @@ keys() {
     esac
 }
 aes_menu() {
-    echo "test"
+    aes_options=$(gum choose Decrypt Encrypt )
+
+    case $aes_options in
+        Decrypt)
+        aes_decrypt
+        ;;
+        Encrypt)
+        aes_encrypt
+        ;;
+    esac
 }
+aes_decrypt() {
+    aes_decrypt_options=$(gum choose AES-128 AES-256)
+
+    case $aes_decrypt_options in
+        AES-128)
+            decrypt_128
+        ;;
+        AES-256)
+            decrypt_256
+        ;;
+    esac
+}
+aes_encrypt() {
+    aes_encrypt_options=$(gum choose AES-128 AES-256)
+
+    case $aes_encrypt_options in
+        AES-128)
+            encrypt_128
+        ;;
+        AES-256)
+            encrypt_256
+        ;;
+    esac
+}
+encrypt_128() {
+    text_or_file=$(gum choose file text)
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        animation_begin
+
+        openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
+
+        animation_end
+
+        echo "Encrypted file:   $output_file.aes" 
+
+        echo "Delete original unencrypted file?"
+        delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        text=$(gum write)
+
+        animation_begin
+
+        printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+        
+        animation_end
+        ;;
+    esac
+}
+encrypt_256() {
+    text_or_file=$(gum choose file text)
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        animation_begin
+
+        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
+
+        animation_end
+
+        echo "Encrypted file:   $output_file.aes" 
+
+        echo "Delete original unencrypted file?"
+        delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        text=$(gum write)
+
+        animation_begin
+
+        printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+        
+        animation_end
+        ;;
+    esac
+}
+decrypt_128() {
+    text_or_file=$(gum choose file text)
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        animation_begin
+
+        openssl enc -aes-128-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
+
+        animation_end
+
+        echo "Unencrypted file:   $output_file.aes" 
+
+        echo "Delete original encrypted file?"
+        delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        text=$(gum write)
+
+        animation_begin
+
+        printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+        
+        animation_end
+        ;;
+    esac
+}
+decrypt_256() {
+    text_or_file=$(gum choose file text)
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        animation_begin
+
+        openssl enc -aes-256-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
+
+        animation_end
+
+        echo "Unencrypted file:   $output_file.aes" 
+
+        echo "Delete original encrypted file?"
+        delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        text=$(gum write)
+
+        animation_begin
+
+        printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+        
+        animation_end
+        ;;
+    esac
+}
+
 gpg_menu() {
     gpg_options=$(gum choose generate-key delete-key import-key export-key list-keys sign verify)
 
