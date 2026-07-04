@@ -131,12 +131,6 @@ keys() {
         ;;
     esac
 
-    capture_status
-
-    status_check
-
-    animation_end
-
     echo "Here is your key: $key"
     echo "Want to save it to a file?"
 
