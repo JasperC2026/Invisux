@@ -65,6 +65,15 @@ BLACK="\e[30m"
 BOLD="\e[1m"
 RESET="\e[0m"
 
+# Privacy
+privacy_menu() {
+    echo "test"
+}
+# Security
+security_menu() {
+    echo "test"
+}
+
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG Exit)
@@ -470,9 +479,15 @@ EOF
     echo "                 Created by: JasperC" 
     sleep 2
     
-    gum_main_option=$(gum choose Encryption Info License Exit)
+    gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
     
     case $gum_main_option in
+        Privacy)
+            privacy_menu
+            ;;
+        Security)
+            security_menu
+            ;;
         Encryption)
             encryption_menu
             ;;
