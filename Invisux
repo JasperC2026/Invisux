@@ -89,7 +89,26 @@ encryption_menu() {
 }
 
 explainer_encryption() {
-    echo "test"
+    cat << EOF
+In the modern world encrypting your data and communication is key to ensure a private and secure world. In that set of mind we designed this encryption part of the toolbox. 
+
+Parts included:
+- general-keys
+- AES
+- GPG
+
+General Keys :
+General keys is a command to generate a key for cryptographic purposes.
+
+AES:
+AES is a menu to encrypt files / texts with the Advanced Encryption Standard protocol, it features two options for an 256-bit key or an 128-bit key. 256-bit is considered more secure and quantum resistant but 128-bit is faster and reasonably still secure.
+
+Dependencie: openssl
+GPG:
+GPG is a menu to generate and delete keys, import/export keys, to list, sign and verify keys. It uses the Gnu Privacy Guard implementation of OpenPGP.
+
+Dependencie: gpg
+EOF
 }
 keys() {
     key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
