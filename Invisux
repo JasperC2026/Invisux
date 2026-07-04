@@ -15,10 +15,18 @@ animation_begin() {
 animation_end() {
     BLA::stop_loading_animation
 }
-
+capture_status() {
+    status=$?
+}
+status_check() {
+    if [[ $status -ne 0 ]]; then
+        echo -e "$status_negative command failed"
+    else
+        echo -e "$status_positive command succeeded" 
+    fi
+}
 # Variables
 written_in="Bash/shell"
-total_commands="2"
 created_on="2 July, 2026"
 contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
@@ -57,7 +65,64 @@ BLACK="\e[30m"
 BOLD="\e[1m"
 RESET="\e[0m"
 
-# Basics
+# Encryption
+encryption_menu() {
+    gum_encryption_menu=$(gum choose Explainer General-keys AES GPG Exit)
+    
+    case $gum_main_option in
+        Explainer)
+            explainer_encryption
+            ;;
+        General-keys)
+            general-keys
+            ;;
+        AES)
+            aes_menu
+            ;;
+        GPG)
+            echo "test"
+            ;;
+        Exit)
+            return 0
+            ;;
+    esac
+}
+
+explainer_encryption() {
+}
+general-keys() {
+    key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
+    echo "You selected $key_size as your key size"
+
+    animation_begin
+
+    case $key_size in
+        128-bit)
+        key=$(openssl rand -hex 16)
+        ;;
+        192-bit)
+        key=$(openssl rand -hex 24)
+        ;;
+        256-bit)
+        key=$(openssl rand -hex 32)
+        ;;
+        512-bit)
+        key=$(openssl rand -hex 64)
+        ;;
+    esac
+
+    capture_status
+
+    status_check
+
+    animation_end
+
+    echo "Here is your key: $key"
+}
+aes_menu() {
+}
+gpg_menu() {
+}
 help () {
     if [[ -z "$1" ]]; then
         _invisux_main_command
@@ -71,6 +136,7 @@ help () {
             ;;
     esac
 }
+
 info() {
     local BOLD='\033[1m'
     local RESET='\033[0m'
@@ -101,7 +167,6 @@ info() {
     printf "\n"
     printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
     printf "\n"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Total commands" "${total_commands}"
     printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Lines of code" "${lines_of_code}"
     printf "\n"
     printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
@@ -114,6 +179,7 @@ info() {
 license() {
     curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
 }
+
 # Command dispatcher
 _INVISUX_COMMANDS=(
     license
@@ -136,16 +202,19 @@ EOF
     echo "                 Created by: JasperC" 
     sleep 2
     
-    gum_main_option=$(gum choose info license exit)
+    gum_main_option=$(gum choose Encryption Info License Exit)
     
     case $gum_main_option in
-        info)
+        Encryption)
+            encryption_menu
+            ;;
+        Info)
             info
             ;;
-        license)
+        License)
             license
             ;;
-        exit)
+        Exit)
             return 0
             ;;
     esac
