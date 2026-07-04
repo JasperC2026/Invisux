@@ -214,11 +214,8 @@ encrypt_128() {
         text)
         text=$(gum write)
 
-        animation_begin
-
         printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
         
-        animation_end
         ;;
     esac
 }
@@ -232,11 +229,7 @@ encrypt_256() {
 
         read -p "Enter file to write to (no extension added):    " output_file
 
-        animation_begin
-
         openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
-
-        animation_end
 
         echo "Encrypted file:   $output_file.aes" 
 
@@ -254,11 +247,7 @@ encrypt_256() {
         text)
         text=$(gum write)
 
-        animation_begin
-
         printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
-        
-        animation_end
         ;;
     esac
 }
@@ -272,11 +261,7 @@ decrypt_128() {
 
         read -p "Enter file to write to (no extension added):    " output_file
 
-        animation_begin
-
-        openssl enc -aes-128-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
-
-        animation_end
+        openssl enc -aes-128-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.txt"
 
         echo "Unencrypted file:   $output_file.aes" 
 
@@ -294,11 +279,7 @@ decrypt_128() {
         text)
         text=$(gum write)
 
-        animation_begin
-
         printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
-        
-        animation_end
         ;;
     esac
 }
@@ -312,11 +293,7 @@ decrypt_256() {
 
         read -p "Enter file to write to (no extension added):    " output_file
 
-        animation_begin
-
         openssl enc -aes-256-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
-
-        animation_end
 
         echo "Unencrypted file:   $output_file.aes" 
 
@@ -334,11 +311,8 @@ decrypt_256() {
         text)
         text=$(gum write)
 
-        animation_begin
-
         printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
         
-        animation_end
         ;;
     esac
 }
