@@ -303,11 +303,7 @@ encrypt_128() {
 
         read -p "Enter file to write to (no extension added):    " output_file
 
-        animation_begin
-
         openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
-
-        animation_end
 
         echo "Encrypted file:   $output_file.aes" 
 
