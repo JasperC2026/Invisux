@@ -87,7 +87,7 @@ privacy_menu() {
                     info
                     ;;
                 License)
-                    license
+                    license_menu
                     ;;
                 Exit)
                     return 0
@@ -121,7 +121,7 @@ security_menu() {
                     info
                     ;;
                 License)
-                    license
+                    license_menu
                     ;;
                 Exit)
                     return 0
@@ -168,7 +168,7 @@ encryption_menu() {
                     info
                     ;;
                 License)
-                    license
+                    license_menu
                     ;;
                 Exit)
                     return 0
@@ -474,28 +474,7 @@ gpg_menu() {
             verify
         ;;
         return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
+            gum_encryption_menu
         ;;
         exit)
             return 1
@@ -601,11 +580,33 @@ info() {
     printf "\n"
     printf "${CSEP}  ───────────────────────────────────────${RESET}\n\n"
 }
+license_menu() {
+    gum_license_menu=$(gum choose full-license overview name-of-license)
 
-license() {
+    case $gum_license_menu in
+        full-license)
+            full-license
+            ;;
+        overview)
+            license_overview
+            ;;
+        name-of-license)
+            name-of-license
+            ;;
+    esac
+}
+full-license() {
     curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
 }
-
+license_overview() {
+    cat << EOF
+Licensed under GPL-3.0 
+You are free to use, copy, modify, and distribute this software for any purpose. With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact. You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
+EOF
+}
+name-of-license() {
+    echo "GPL V3"
+}
 # Command dispatcher
 _INVISUX_COMMANDS=(
     license
@@ -644,7 +645,7 @@ EOF
             info
             ;;
         License)
-            license
+            license_menu
             ;;
         Exit)
             return 0
