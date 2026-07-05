@@ -581,7 +581,7 @@ info() {
     printf "${CSEP}  ───────────────────────────────────────${RESET}\n\n"
 }
 license_menu() {
-    gum_license_menu=$(gum choose full-license overview name-of-license)
+    gum_license_menu=$(gum choose full-license overview name-of-license return exit)
 
     case $gum_license_menu in
         full-license)
@@ -592,6 +592,33 @@ license_menu() {
             ;;
         name-of-license)
             name-of-license
+            ;;
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license_menu
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
+            ;;
+        exit)
+            return 0
             ;;
     esac
 }
