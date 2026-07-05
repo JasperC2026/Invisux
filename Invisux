@@ -31,9 +31,9 @@ created_on="2 July, 2026"
 contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
 license="GPL-3.0"
 lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
-type="Pre-Alpha"
-version="V0.0.2"
-release_date="3-7-2026"
+type="Alpha"
+version="V0.0.3"
+release_date="5-7-2026"
 test_date="None"
 install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
