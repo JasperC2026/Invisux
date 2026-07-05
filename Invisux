@@ -67,16 +67,76 @@ RESET="\e[0m"
 
 # Privacy
 privacy_menu() {
-    echo "test"
+    gum_privacy_menu=$(gum choose return exit)
+
+    case $gum_privacy_menu in
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
+        ;;
+        exit)
+            return 1
+        ;;
+    esac
 }
 # Security
 security_menu() {
-    echo "test"
+    gum_security_menu=$(gum choose return exit)
+
+    case $gum_security_menu in
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
+        ;;
+        exit)
+            return 1
+        ;;
+    esac
 }
 
 # Encryption
 encryption_menu() {
-    gum_encryption_menu=$(gum choose Explainer General-keys AES GPG Exit)
+    gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
     
     case $gum_encryption_menu in
         Explainer)
@@ -91,9 +151,33 @@ encryption_menu() {
         GPG)
             echo "test"
             ;;
-        Exit)
-            return 0
-            ;;
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
+        ;;
+        exit)
+            return 1
+        ;;
     esac
 }
 
@@ -156,15 +240,21 @@ keys() {
     esac
 }
 aes_menu() {
-    aes_options=$(gum choose Decrypt Encrypt )
+    aes_options=$(gum choose Decrypt Encrypt return exit )
 
     case $aes_options in
         Decrypt)
-        aes_decrypt
-        ;;
+            aes_decrypt
+            ;;
         Encrypt)
-        aes_encrypt
-        ;;
+            aes_encrypt
+            ;;
+        return)
+            encryption_menu
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 aes_decrypt() {
@@ -173,26 +263,38 @@ aes_decrypt() {
     case $aes_decrypt_options in
         AES-128)
             decrypt_128
-        ;;
+            ;;
         AES-256)
             decrypt_256
-        ;;
+            ;;
+        return)
+            aes_menu
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 aes_encrypt() {
-    aes_encrypt_options=$(gum choose AES-128 AES-256)
+    aes_encrypt_options=$(gum choose AES-128 AES-256 return exit)
 
     case $aes_encrypt_options in
         AES-128)
             encrypt_128
-        ;;
+            ;;
         AES-256)
             encrypt_256
-        ;;
+            ;;
+        return)
+            aes_menu
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 encrypt_128() {
-    text_or_file=$(gum choose file text)
+    text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -226,10 +328,16 @@ encrypt_128() {
         printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
         
         ;;
+        return)
+            aes_encrypt
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 encrypt_256() {
-    text_or_file=$(gum choose file text)
+    text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -258,10 +366,16 @@ encrypt_256() {
 
         printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
         ;;
+        return)
+            aes_encrypt
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 decrypt_128() {
-    text_or_file=$(gum choose file text)
+    text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -290,10 +404,16 @@ decrypt_128() {
 
         printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
         ;;
+        return)
+            aes_decrypt
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 decrypt_256() {
-    text_or_file=$(gum choose file text)
+    text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -323,6 +443,12 @@ decrypt_256() {
         printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
         
         ;;
+        return)
+            aes_decrypt
+            ;;
+        exit)
+            return 1
+            ;;
     esac
 }
 
@@ -350,6 +476,33 @@ gpg_menu() {
         ;;
         verify)
             verify
+        ;;
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
+        ;;
+        exit)
+            return 1
         ;;
     esac
 }
