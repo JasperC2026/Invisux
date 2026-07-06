@@ -156,6 +156,8 @@ emoty_trash() {
     read -rp "Securely delete all trash? (y/n): " confirm
 
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        animation_begin
+
         # Shred files: 3 passes, zero out on final pass, then remove
         find "$TRASH_FILES" -type f -print0 2>/dev/null \
             | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
@@ -166,6 +168,8 @@ emoty_trash() {
         # Shred and remove the corresponding .trashinfo metadata files
         find "$TRASH_INFO" -type f -print0 2>/dev/null \
             | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+        animation_end
     else
         echo "Cancelled"
         return 1
@@ -186,9 +190,13 @@ delete-file() {
 
     file=$(gum file)
 
+    animation_begin
+
     shred -z -n 3 $file
 
     shred -u $file
+
+    animation_end
 
     capture_status
 
