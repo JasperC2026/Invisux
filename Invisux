@@ -101,7 +101,7 @@ privacy_menu() {
 }
 # Security
 security_menu() {
-    gum_security_menu=$(gum choose empty-trash delete-file return exit)
+    gum_security_menu=$(gum choose empty-trash delete-file update-apps return exit)
 
     case $gum_security_menu in
         empty-trash)
@@ -109,6 +109,9 @@ security_menu() {
             ;;
         delete-file)
             delete-file
+            ;;
+        update-apps)
+            update-apps
             ;;
         return)
             gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
@@ -202,6 +205,9 @@ delete-file() {
 
     status_check
 }
+update-apps() {
+    options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
+    }
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
