@@ -101,11 +101,14 @@ privacy_menu() {
 }
 # Security
 security_menu() {
-    gum_security_menu=$(gum choose empty-trash return exit)
+    gum_security_menu=$(gum choose empty-trash delete-file return exit)
 
     case $gum_security_menu in
         empty-trash)
             empty-trash
+            ;;
+        delete-file)
+            delete-file
             ;;
         return)
             gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
@@ -177,6 +180,19 @@ emoty_trash() {
         echo "Some items may remain, check manually"
         return 1
     fi
+}
+delete-file() {
+    echo "Select a file to be removed:  "
+
+    file=$(gum file)
+
+    shred -z -n 3 $file
+
+    shred -u $file
+
+    capture_status
+
+    status_check
 }
 # Encryption
 encryption_menu() {
