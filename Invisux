@@ -67,9 +67,12 @@ RESET="\e[0m"
 
 # Privacy
 privacy_menu() {
-    gum_privacy_menu=$(gum choose return exit)
+    gum_privacy_menu=$(gum choose generate-passwd return exit)
 
     case $gum_privacy_menu in
+        generate-passwd)
+            generate-passwd
+            ;;
         return)
             gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
             
@@ -98,6 +101,36 @@ privacy_menu() {
             return 1
         ;;
     esac
+}
+generate-passwd() {
+    echo "Password lenght: (between 8 and 128)"
+    
+    length=$(gum input)
+    length=${length:-16}
+
+    local pass_alnum
+    pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
+    
+    echo -e "  Alphanumeric : ${pass_alnum}${RESET}"
+
+    local pass_full
+    pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
+    
+    echo -e "  With symbols : ${pass_full}${RESET}"
+
+    local pass_hex
+    pass_hex=$(openssl rand -hex 64 | head -c "$length")
+
+    echo -e "  Hex          : ${pass_hex}${RESET}"
+
+    echo
+
+    local entropy_alnum entropy_full
+    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
+    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
+
+    echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
+
 }
 # Security
 security_menu() {
