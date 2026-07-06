@@ -101,9 +101,12 @@ privacy_menu() {
 }
 # Security
 security_menu() {
-    gum_security_menu=$(gum choose return exit)
+    gum_security_menu=$(gum choose empty-trash return exit)
 
     case $gum_security_menu in
+        empty-trash)
+            empty-trash
+            ;;
         return)
             gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
             
@@ -133,7 +136,48 @@ security_menu() {
         ;;
     esac
 }
+emoty_trash() {
+    TRASH_FILES="$HOME/.local/share/Trash/files"
+    TRASH_INFO="$HOME/.local/share/Trash/info"
 
+    local file_count
+    file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+
+    if [[ $file_count -eq 0 ]]; then
+        echo "[i] Trash is already empty."
+        return 0
+    fi
+
+    echo "[i] Found $file_count item(s) in Trash."
+
+    read -rp "Securely delete all trash? (y/n): " confirm
+
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        # Shred files: 3 passes, zero out on final pass, then remove
+        find "$TRASH_FILES" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+        # Remove leftover empty directories
+        find "$TRASH_FILES" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+
+        # Shred and remove the corresponding .trashinfo metadata files
+        find "$TRASH_INFO" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+    else
+        echo "Cancelled"
+        return 1
+    fi
+
+    local remaining
+    remaining=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+
+    if [[ $remaining -eq 0 ]]; then
+        echo "Succefully emptied"
+    else
+        echo "Some items may remain, check manually"
+        return 1
+    fi
+}
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
