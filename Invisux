@@ -241,12 +241,6 @@ delete-file() {
 update-apps() {
     options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
 
-
-    echo $options | tr " " "/n" | while read option
-    do
-        echo $option
-    done
-
     echo "Are you sure?"
     confirm=$(gum choose yes no)
 
@@ -256,11 +250,30 @@ update-apps() {
             ;;
     esac
 
-        # sudo apt update -y && sudo apt upgrade -y
-        # sudo snap refresh
-        # sudo pacman -Syu --quiet --noconfirm
-        # sudo dnf upgrade --assumeyes
-        # sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+    echo "You selected $(echo "$options" | wc -l) package manager(s)"
+    echo ""
+
+    while IFS= read -r choice; do
+        echo "Processing selection: $choice"
+        
+        case "$choice" in
+            "APT")
+                sudo apt update -y && sudo apt upgrade -y
+                ;;
+            "Snap")
+                sudo snap refresh
+                ;;
+            "Pacman")
+                sudo pacman -Syu --quiet --noconfirm
+                ;;
+            "DNF")
+                sudo dnf upgrade --assumeyes
+                ;;
+            "Zypper")
+                sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+                ;;
+        esac
+    done <<< "$options"
 }
 # Encryption
 encryption_menu() {
