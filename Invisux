@@ -241,6 +241,11 @@ delete-file() {
 update-apps() {
     options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
     }
+
+    echo $options | tr " " "/n" | while read option
+    do
+        echo $option
+    done
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
