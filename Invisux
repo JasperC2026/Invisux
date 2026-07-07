@@ -246,6 +246,22 @@ update-apps() {
     do
         echo $option
     done
+
+    # APT
+    # sudo apt update -y && sudo apt upgrade -y
+
+    # Snap
+    # sudo snap refresh
+
+    # Pacman
+    # sudo pacman -Syu --quiet --noconfirm
+
+    # DNF
+    # sudo dnf upgrade --assumeyes
+
+    # Zypper
+    # sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
