@@ -247,70 +247,20 @@ update-apps() {
         echo $option
     done
 
-    # APT
     echo "Are you sure?"
     confirm=$(gum choose yes no)
 
     case $confirm in
-        yes)
+        no)
+            return 1
+            ;;
+    esac
+
         # sudo apt update -y && sudo apt upgrade -y
-            ;;
-        no)
-            return 1
-            ;;
-    esac
-
-    # Snap
-    echo "Are you sure?"
-    confirm=$(gum choose yes no)
-
-    case $confirm in
-        yes)
         # sudo snap refresh
-            ;;
-        no)
-            return 1
-            ;;
-    esac
-
-    # Pacman
-    echo "Are you sure?"
-    confirm=$(gum choose yes no)
-
-    case $confirm in
-        yes)
         # sudo pacman -Syu --quiet --noconfirm
-            ;;
-        no)
-            return 1
-            ;;
-    esac
-
-    # DNF
-    echo "Are you sure?"
-    confirm=$(gum choose yes no)
-
-    case $confirm in
-        yes)
         # sudo dnf upgrade --assumeyes
-            ;;
-        no)
-            return 1
-            ;;
-    esac
-
-    # Zypper
-    echo "Are you sure?"
-    confirm=$(gum choose yes no)
-
-    case $confirm in
-        yes)
         # sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
-            ;;
-        no)
-            return 1
-            ;;
-    esac
 }
 # Encryption
 encryption_menu() {
