@@ -240,7 +240,7 @@ delete-file() {
 }
 update-apps() {
     options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
-    }
+
 
     echo $options | tr " " "/n" | while read option
     do
@@ -248,20 +248,70 @@ update-apps() {
     done
 
     # APT
-    # sudo apt update -y && sudo apt upgrade -y
+    echo "Are you sure?"
+    confirm=$(gum choose yes no)
+
+    case $confirm in
+        yes)
+        # sudo apt update -y && sudo apt upgrade -y
+            ;;
+        no)
+            return 1
+            ;;
+    esac
 
     # Snap
-    # sudo snap refresh
+    echo "Are you sure?"
+    confirm=$(gum choose yes no)
+
+    case $confirm in
+        yes)
+        # sudo snap refresh
+            ;;
+        no)
+            return 1
+            ;;
+    esac
 
     # Pacman
-    # sudo pacman -Syu --quiet --noconfirm
+    echo "Are you sure?"
+    confirm=$(gum choose yes no)
+
+    case $confirm in
+        yes)
+        # sudo pacman -Syu --quiet --noconfirm
+            ;;
+        no)
+            return 1
+            ;;
+    esac
 
     # DNF
-    # sudo dnf upgrade --assumeyes
+    echo "Are you sure?"
+    confirm=$(gum choose yes no)
+
+    case $confirm in
+        yes)
+        # sudo dnf upgrade --assumeyes
+            ;;
+        no)
+            return 1
+            ;;
+    esac
 
     # Zypper
-    # sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+    echo "Are you sure?"
+    confirm=$(gum choose yes no)
 
+    case $confirm in
+        yes)
+        # sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+            ;;
+        no)
+            return 1
+            ;;
+    esac
+}
 # Encryption
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
