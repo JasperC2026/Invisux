@@ -105,7 +105,7 @@ privacy_menu() {
 generate-passwd() {
     echo "Password lenght: (between 8 and 128)"
     
-    length=$(gum input)
+    length=$(gum input --placeholder "Password lenght")
     length=${length:-16}
 
     local pass_alnum
