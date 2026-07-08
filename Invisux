@@ -807,6 +807,13 @@ _INVISUX_COMMANDS=(
     privacy_menu
     security_menu
     encryption_menu
+    license_menu
+    generate-passwd
+    aes_encrypt
+    aes_decrypt
+    keys
+    update-apps
+    emoty_trash
 )
 
 # Main command
