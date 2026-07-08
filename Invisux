@@ -66,6 +66,7 @@ BOLD="\e[1m"
 RESET="\e[0m"
 
 # Privacy
+
 privacy_menu() {
     gum_privacy_menu=$(gum choose generate-passwd return exit)
 
@@ -102,6 +103,7 @@ privacy_menu() {
         ;;
     esac
 }
+
 generate-passwd() {
     echo "Password lenght: (between 8 and 128)"
     
@@ -132,7 +134,9 @@ generate-passwd() {
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
 
 }
+
 # Security
+
 security_menu() {
     gum_security_menu=$(gum choose empty-trash delete-file update-apps return exit)
 
@@ -175,6 +179,7 @@ security_menu() {
         ;;
     esac
 }
+
 emoty_trash() {
     TRASH_FILES="$HOME/.local/share/Trash/files"
     TRASH_INFO="$HOME/.local/share/Trash/info"
@@ -221,6 +226,7 @@ emoty_trash() {
         return 1
     fi
 }
+
 delete-file() {
     echo "Select a file to be removed:  "
 
@@ -238,6 +244,7 @@ delete-file() {
 
     status_check
 }
+
 update-apps() {
     options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
 
@@ -275,7 +282,9 @@ update-apps() {
         esac
     done <<< "$options"
 }
+
 # Encryption
+
 encryption_menu() {
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
     
@@ -344,6 +353,7 @@ GPG is a menu to generate and delete keys, import/export keys, to list, sign and
 Dependencie: gpg
 EOF
 }
+
 keys() {
     key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
     echo "You selected $key_size as your key size"
@@ -380,6 +390,7 @@ keys() {
         ;;
     esac
 }
+
 aes_menu() {
     aes_options=$(gum choose Decrypt Encrypt return exit )
 
@@ -398,6 +409,7 @@ aes_menu() {
             ;;
     esac
 }
+
 aes_decrypt() {
     aes_decrypt_options=$(gum choose AES-128 AES-256)
 
@@ -416,6 +428,7 @@ aes_decrypt() {
             ;;
     esac
 }
+
 aes_encrypt() {
     aes_encrypt_options=$(gum choose AES-128 AES-256 return exit)
 
@@ -434,6 +447,7 @@ aes_encrypt() {
             ;;
     esac
 }
+
 encrypt_128() {
     text_or_file=$(gum choose file text return exit)
 
@@ -473,6 +487,7 @@ encrypt_128() {
             ;;
     esac
 }
+
 encrypt_256() {
     text_or_file=$(gum choose file text return exit)
 
@@ -511,6 +526,7 @@ encrypt_256() {
             ;;
     esac
 }
+
 decrypt_128() {
     text_or_file=$(gum choose file text return exit)
 
@@ -549,6 +565,7 @@ decrypt_128() {
             ;;
     esac
 }
+
 decrypt_256() {
     text_or_file=$(gum choose file text return exit)
 
@@ -622,9 +639,11 @@ gpg_menu() {
         ;;
     esac
 }
+
 generate-key() {
     gpg --gen-key
 } 
+
 delete-key() {
     read -p "Username:  " username
     echo "Enter kind of key:    "
@@ -639,36 +658,42 @@ delete-key() {
         ;;
     esac
 }
+
 import-key() {
     echo "Select a file:    "
     file=$(gum file)
 
     gpg --import $file
 } 
+
 export-key() {
     read -p "Enter your username:   " username
     read -p "Enter file to write to (no extension added):    " file
 
     gpg --export -a $username $file.key
 } 
+
 list-keys() {
     echo "Public:   "
     gpg --list-keys
     echo "Secret:   "
     gpg --list-secret-keys
 } 
+
 sign() {
     echo "Select a file:    "
     file=$(gum file)
 
     gpg --sign $file
 }
+
 verify() {
     echo "Select a file:    "
     file=$(gum file)
 
 	gpg --verify $file
 }
+
 help () {
     if [[ -z "$1" ]]; then
         _invisux_main_command
@@ -779,6 +804,9 @@ name-of-license() {
 _INVISUX_COMMANDS=(
     license
     help
+    privacy_menu
+    security_menu
+    encryption_menu
 )
 
 # Main command
