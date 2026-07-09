@@ -804,6 +804,15 @@ name-of-license() {
 _INVISUX_COMMANDS=(
     license
     help
+    info
+    verify
+    sign
+    list-keys
+    export-keys
+    decrypt_256
+    decrypt_128
+    encrypt_256
+    encrypt_128
     privacy_menu
     security_menu
     encryption_menu
@@ -814,6 +823,9 @@ _INVISUX_COMMANDS=(
     keys
     update-apps
     emoty_trash
+    delete-file
+    explainer_encryption
+    generate-key
 )
 
 # Main command
