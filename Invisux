@@ -138,9 +138,12 @@ generate-passwd() {
 # Security
 
 security_menu() {
-    gum_security_menu=$(gum choose empty-trash delete-file emove_metadata update-apps return exit)
+    gum_security_menu=$(gum choose audit-system empty-trash delete-file emove_metadata update-apps return exit)
 
     case $gum_security_menu in
+        audit-system )
+            audit-system 
+            ;;
         empty-trash)
             empty-trash
             ;;
@@ -182,7 +185,14 @@ security_menu() {
         ;;
     esac
 }
-
+audit-system() {
+    echo "Installing tool:  "
+    sudo apt update
+    sudo apt install lynis 
+    
+    echo "Running tool: "
+    sudo lynis audit system
+}
 emoty_trash() {
     TRASH_FILES="$HOME/.local/share/Trash/files"
     TRASH_INFO="$HOME/.local/share/Trash/info"
@@ -837,6 +847,7 @@ _INVISUX_COMMANDS=(
     explainer_encryption
     generate-key
     remove_metadata
+    audit-system
 )
 
 # Main command
@@ -881,9 +892,9 @@ EOF
 
 # Command handler
     if [[ $# -eq 0 ]]; then
-       _invisux_main_command
+        _invisux_main_command
     elif [[ "$1" == "help" ]]; then
-       help "$2"
+        help "$2"
     elif [[ " ${_INVISUX_COMMANDS[*]} " == *" $1 "* ]]; then
         "$1"
     else
