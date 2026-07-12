@@ -99,7 +99,7 @@ privacy_menu() {
             esac
         ;;
         exit)
-            return 1
+            return 0
         ;;
     esac
 }
@@ -181,7 +181,7 @@ security_menu() {
             esac
         ;;
         exit)
-            return 1
+            return 0
         ;;
     esac
 }
@@ -226,7 +226,7 @@ emoty_trash() {
         animation_end
     else
         echo "Cancelled"
-        return 1
+        return 0
     fi
 
     local remaining
@@ -236,7 +236,7 @@ emoty_trash() {
         echo "Succefully emptied"
     else
         echo "Some items may remain, check manually"
-        return 1
+        return 0
     fi
 }
 
@@ -273,7 +273,7 @@ update-apps() {
 
     case $confirm in
         no)
-            return 1
+            return 0
             ;;
     esac
 
@@ -346,7 +346,7 @@ encryption_menu() {
             esac
         ;;
         exit)
-            return 1
+            return 0
         ;;
     esac
 }
@@ -425,7 +425,7 @@ aes_menu() {
             encryption_menu
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -444,7 +444,7 @@ aes_decrypt() {
             aes_menu
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -463,7 +463,7 @@ aes_encrypt() {
             aes_menu
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -503,7 +503,7 @@ encrypt_128() {
             aes_encrypt
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -542,7 +542,7 @@ encrypt_256() {
             aes_encrypt
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -581,7 +581,7 @@ decrypt_128() {
             aes_decrypt
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -621,7 +621,7 @@ decrypt_256() {
             aes_decrypt
             ;;
         exit)
-            return 1
+            return 0
             ;;
     esac
 }
@@ -655,7 +655,7 @@ gpg_menu() {
             gum_encryption_menu
         ;;
         exit)
-            return 1
+            return 0
         ;;
     esac
 }
@@ -723,7 +723,7 @@ help () {
     case "$1" in
         *)
             echo -e "${RED}[!] No help entry for '$1'.${RESET}"
-            return 1
+            return 0
             ;;
     esac
 }
@@ -899,7 +899,7 @@ EOF
         "$1"
     else
         echo -e "${RED}[!] Unknown command: $1${RESET}"   
-        return 1
+        return 0
     fi
 
 # Creators note: if you are reading this, thank you for checking out my script! Love you all <3
