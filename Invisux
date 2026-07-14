@@ -39,7 +39,7 @@ install_path=$(command -v peregine 2>/dev/null || echo "not installed")
 installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
 shell_info="$( basename "$SHELL" ) $BASH_VERSION"
 platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
-_deps=(gum openssl shred)
+_deps=(gum gpg netstat openssl shred)
 _deps_met=0
 
 for _d in "${_deps[@]}"; do command -v "$_d" &>/dev/null && (( _deps_met++ )); done
@@ -138,7 +138,7 @@ generate-passwd() {
 # Security
 
 security_menu() {
-    gum_security_menu=$(gum choose audit-system empty-trash delete-file emove_metadata update-apps return exit)
+    gum_security_menu=$(gum choose audit-system empty-trash delete-file emove_metadata update-apps check_ports return exit)
 
     case $gum_security_menu in
         audit-system )
@@ -152,6 +152,9 @@ security_menu() {
             ;;
         remove_metadata)
             remove_metadata
+            ;;
+        check_ports)
+            check_ports
             ;;
         update-apps)
             update-apps
@@ -184,6 +187,9 @@ security_menu() {
             return 0
         ;;
     esac
+}
+check_ports() {
+    netstat -tuln
 }
 audit-system() {
     echo "Installing tool:  "
