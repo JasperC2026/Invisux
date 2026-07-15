@@ -39,35 +39,18 @@ RESET="\e[0m"
 # Privacy
 
 privacy_menu() {
-    gum_privacy_menu=$(gum choose generate-passwd return exit)
+    echo
+    gum_privacy_menu=$(gum choose "Generate a password" "Hash password" "return" "exit")
 
     case $gum_privacy_menu in
-        generate-passwd)
+        "Generate a password")
             generate-passwd
             ;;
+        "Hash password")
+        hash-passwd
+        ;;
         return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license_menu
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
+            main_menu
         ;;
         exit)
             return 0
@@ -76,10 +59,22 @@ privacy_menu() {
 }
 
 generate-passwd() {
-    echo "Password lenght: (between 8 and 128)"
-    
-    length=$(gum input --placeholder "Password lenght")
+    echo "Password length: (between 8 and 128)"
+
+    length=$(gum input --placeholder "Password length")
     length=${length:-16}
+
+    if [[ ! "$length" =~ ^[0-9]+$ ]]; then
+        echo "Invalid input for lenght"
+        return 0
+    fi
+
+    if [ "$length" -ge 7 ] && [ "$length" -le 129 ]; then
+        echo "You selected $length as your lenght size"
+    else
+        echo "You selected a lenght not supported"
+        return 0
+    fi
 
     local pass_alnum
     pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
@@ -103,12 +98,15 @@ generate-passwd() {
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
 
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
+}
 
+hash-passwd() {
+    echo "test"
 }
 
 # Security
-
 security_menu() {
+    echo
     gum_security_menu=$(gum choose audit-system empty-trash delete-file emove_metadata update-apps check_ports return exit)
 
     case $gum_security_menu in
@@ -279,6 +277,7 @@ update-apps() {
 # Encryption
 
 encryption_menu() {
+    echo
     gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
     
     case $gum_encryption_menu in
@@ -702,7 +701,7 @@ help () {
 }
 
 info() {
-
+    echo "test"
 }
 license_menu() {
     gum_license_menu=$(gum choose full-license overview name-of-license return exit)
@@ -804,6 +803,9 @@ EOF
     echo "                 Created by: JasperC" 
     sleep 2
     
+    main_menu
+}
+main_menu() {
     gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
     
     case $gum_main_option in
