@@ -1,0 +1,53 @@
+#!/bin/bash
+
+echo "Installing dependencies:  "
+sudo apt update && sudo apt install gum gpg openssl shred 
+
+echo "Done"
+
+echo "Choose an option: "
+choice=$(gum choose "See version" "See license" "Install" "Update")
+
+case $choice in
+    See version)
+    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/version
+    ;;
+    See license)
+    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
+    ;;
+    Install)
+    install=$(gum choose "Stable" "Newest beta" "Source")
+    case $install in
+        Stable)
+        dir=$(pwd)
+        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Versions/invisux-v1.0
+        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/invisux_loading.sh
+
+        chmod +x $dir/invisux-v1.0
+        chmod +x $dir/invisux-loading.sh
+
+        cp $dir/invisux-v1.0 /usr/local/bin/invisux
+
+        echo "All set"
+        ;;
+        Newest beta)
+        echo "None yet"
+        ;;
+        Source)
+        dir=$(pwd)
+        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Invisux
+        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/invisux_loading.sh
+
+        chmod +x $dir/Invisux
+        chmod +x $dir/invisux-loading.sh
+
+        cp $dir/Invisux /usr/local/bin/Invisux
+        cp $dir/invisux_loading.sh /usr/local/bin/invisux_loading.sh
+        
+        echo "All set"
+        ;;
+    esac
+    ;;
+    Update)
+    ;;
+esac
