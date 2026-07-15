@@ -15,37 +15,8 @@ animation_begin() {
 animation_end() {
     BLA::stop_loading_animation
 }
-capture_status() {
-    status=$?
-}
-status_check() {
-    if [[ $status -ne 0 ]]; then
-        echo -e "$status_negative command failed"
-    else
-        echo -e "$status_positive command succeeded" 
-    fi
-}
+
 # Variables
-written_in="Bash/shell"
-created_on="2 July, 2026"
-contributors="JasperC (Lead Developer, Maintainer), and Open Source Community"
-license="GPL-3.0"
-lines_of_code=$(wc -l < "${BASH_SOURCE[0]}")
-type="Alpha"
-version="V0.0.3"
-release_date="5-7-2026"
-test_date="None"
-install_path=$(command -v peregine 2>/dev/null || echo "not installed")
-installed=$( [[ "$install_path" != "not installed" ]] && echo "Yes" || echo "No (running from repo)" )
-shell_info="$( basename "$SHELL" ) $BASH_VERSION"
-platform=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
-_deps=(gum gpg netstat openssl shred)
-_deps_met=0
-
-for _d in "${_deps[@]}"; do command -v "$_d" &>/dev/null && (( _deps_met++ )); done
-deps_status="${_deps_met}/${#_deps[@]} found"
-unset _deps _deps_met _d
-
 DIVIDER="───────────────────────────────────────────────────────────────"
 status_negative="${RED}[!]${RESET}"
 status_positive="${GREEN}[✔]${RESET}"
@@ -258,10 +229,6 @@ delete-file() {
     shred -u $file
 
     animation_end
-
-    capture_status
-
-    status_check
 }
 
 remove_metadata() {
@@ -735,42 +702,7 @@ help () {
 }
 
 info() {
-    local BOLD='\033[1m'
-    local RESET='\033[0m'
-    local DIM='\033[2m'
-    local CLOGO='\033[38;5;255m'   # white  — logo @'s
-    local CLABEL='\e[0;35m'         # purple   — info labels
-    local CVAL='\033[38;5;250m'    # grey   — info values
-    local CSEP='\033[38;5;240m'    # dim    — separators / title version
-    
-    printf "\n"
-    printf "${CLABEL}${BOLD}  Invisux${RESET}\n"
-    printf "${DIM}  Linux Privacy Toolkit${RESET}\n"
-    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
-    printf "\n"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Version" "${type} ${version}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Language" "${written_in}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "License" "${license}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Created" "${created_on}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Release date" "${release_date}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Installed" "${installed}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Install path" "${install_path}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Shell" "${shell_info}"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Platform" "${platform}"
-    printf "\n"
-    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
-    printf "\n"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Dependencies" "${deps_status}"
-    printf "\n"
-    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
-    printf "\n"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Lines of code" "${lines_of_code}"
-    printf "\n"
-    printf "${CSEP}  ───────────────────────────────────────${RESET}\n"
-    printf "\n"
-    printf "  ${CLABEL}${BOLD}%-18s${RESET} ${CVAL}%s${RESET}\n" "Test date" "${test_date}"
-    printf "\n"
-    printf "${CSEP}  ───────────────────────────────────────${RESET}\n\n"
+
 }
 license_menu() {
     gum_license_menu=$(gum choose full-license overview name-of-license return exit)
