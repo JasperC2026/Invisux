@@ -40,7 +40,7 @@ RESET="\e[0m"
 
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "Generate a password" "Hash password" "return" "exit")
+    gum_privacy_menu=$(gum choose "Generate a password" "return" "exit")
 
     case $gum_privacy_menu in
         "Generate a password")
@@ -98,10 +98,6 @@ generate-passwd() {
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
 
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
-}
-
-hash-passwd() {
-    echo "test"
 }
 
 # Security
@@ -278,9 +274,12 @@ update-apps() {
 
 encryption_menu() {
     echo
-    gum_encryption_menu=$(gum choose Explainer General-keys AES GPG return exit)
+    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG return exit)
     
     case $gum_encryption_menu in
+        Hash)
+        hash-passwd
+        ;;
         Explainer)
             explainer_encryption
             ;;
@@ -322,7 +321,31 @@ encryption_menu() {
         ;;
     esac
 }
+hash-passwd() {
+    echo "Choose a password to hash"
+    hash=$(gum input --placeholder "Password" )
 
+    echo "Choose a protocol:    "
+    protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
+
+    case $protocol in
+        MD5)
+        openssl passwd -1 $hash
+        ;;
+        SHA256)
+        openssl passwd -5 $hash
+        ;;
+        SHA512)
+        openssl passwd -6 $hash
+        ;;
+        APR1)
+        openssl passwd -apr1 $hash
+        ;;
+        AIX)
+        openssl passwd -aixmd5 $hash
+        ;;
+    esac
+}
 explainer_encryption() {
     cat << EOF
 In the modern world encrypting your data and communication is key to ensure a private and secure world. In that set of mind we designed this encryption part of the toolbox. 
