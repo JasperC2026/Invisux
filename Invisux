@@ -215,6 +215,11 @@ delete-file() {
 
     file=$(gum file)
 
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        return 0
+    fi
+
     animation_begin
 
     shred -z -n 3 $file
@@ -227,6 +232,11 @@ delete-file() {
 remove_metadata() {
     echo "Select a file:    "
     file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        return 0
+    fi
 
     gum confirm "Edit $file?" && exiftool -all= $file
 }
