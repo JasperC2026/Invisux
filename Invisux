@@ -329,21 +329,25 @@ hash-passwd() {
 
     case $protocol in
         MD5)
-        openssl passwd -1 $hash
+        output=$(openssl passwd -1 $hash)
         ;;
         SHA256)
-        openssl passwd -5 $hash
+        output=$(openssl passwd -5 $hash)
         ;;
         SHA512)
-        openssl passwd -6 $hash
+        output=$(openssl passwd -6 $hash)
         ;;
         APR1)
-        openssl passwd -apr1 $hash
+        output=$(openssl passwd -apr1 $hash)
         ;;
         AIX)
-        openssl passwd -aixmd5 $hash
+        output=$(openssl passwd -aixmd5 $hash)
         ;;
     esac
+
+    echo 
+    echo "Your hashed password is: $output"
+    echo "Hashed with: $protocol"
 }
 explainer_encryption() {
     cat << EOF
@@ -353,6 +357,10 @@ Parts included:
 - general-keys
 - AES
 - GPG
+- Hash
+
+Hash :
+Hash a password with an cryptographic hash function.
 
 General Keys :
 General keys is a command to generate a key for cryptographic purposes.
@@ -360,10 +368,10 @@ General keys is a command to generate a key for cryptographic purposes.
 AES:
 AES is a menu to encrypt files / texts with the Advanced Encryption Standard protocol, it features two options for an 256-bit key or an 128-bit key. 256-bit is considered more secure and quantum resistant but 128-bit is faster and reasonably still secure.
 
-Dependencie: openssl
 GPG:
 GPG is a menu to generate and delete keys, import/export keys, to list, sign and verify keys. It uses the Gnu Privacy Guard implementation of OpenPGP.
 
+Dependencie: openssl
 Dependencie: gpg
 EOF
 }
@@ -371,8 +379,6 @@ EOF
 keys() {
     key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
     echo "You selected $key_size as your key size"
-
-    animation_begin
 
     case $key_size in
         128-bit)
@@ -470,6 +476,11 @@ encrypt_128() {
         echo "Enter file:   "
         file=$(gum file)
 
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            return 0
+        fi
+        
         read -p "Enter file to write to (no extension added):    " output_file
 
         openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
@@ -489,6 +500,11 @@ encrypt_128() {
         ;;
         text)
         text=$(gum write)
+
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            return 0
+        fi
 
         printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
         
@@ -510,6 +526,11 @@ encrypt_256() {
         echo "Enter file:   "
         file=$(gum file)
 
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            return 0
+        fi
+
         read -p "Enter file to write to (no extension added):    " output_file
 
         openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
@@ -530,6 +551,11 @@ encrypt_256() {
         text)
         text=$(gum write)
 
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            return 0
+        fi
+
         printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
         ;;
         return)
@@ -548,6 +574,11 @@ decrypt_128() {
         file)
         echo "Enter file:   "
         file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            return 0
+        fi
 
         read -p "Enter file to write to (no extension added):    " output_file
 
@@ -569,6 +600,11 @@ decrypt_128() {
         text)
         text=$(gum write)
 
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            return 0
+        fi
+
         printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
         ;;
         return)
@@ -587,6 +623,11 @@ decrypt_256() {
         file)
         echo "Enter file:   "
         file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            return 0
+        fi
 
         read -p "Enter file to write to (no extension added):    " output_file
 
@@ -608,8 +649,12 @@ decrypt_256() {
         text)
         text=$(gum write)
 
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            return 0
+        fi
+
         printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
-        
         ;;
         return)
             aes_decrypt
@@ -736,7 +781,7 @@ EOF
     echo -e "${RESET}                Linux Privacy Toolkit"
     echo "                 Created by: JasperC" 
     echo
-    
+
     curl https://codeberg.org/JasperC/Invisux/raw/branch/main/version
 }
 
