@@ -43,14 +43,65 @@ privacy_menu() {
     gum_privacy_menu=$(gum choose "Generate a password" "return" "exit")
 
     case $gum_privacy_menu in
-        "Generate a password")
-            generate-passwd
-            ;;
-        "Hash password")
-        hash-passwd
-        ;;
         return)
             main_menu
+        ;;
+        exit)
+            return 0
+        ;;
+    esac
+}
+
+# Security
+security_menu() {
+    echo
+    gum_security_menu=$(gum choose "Generate a password" audit-system empty-trash delete-file emove_metadata update-apps check_ports return exit)
+
+    case $gum_security_menu in
+        "Generate a password")
+            generate-passwd
+            ;;    
+        audit-system )
+            audit-system 
+            ;;
+        empty-trash)
+            empty-trash
+            ;;
+        delete-file)
+            delete-file
+            ;;
+        remove_metadata)
+            remove_metadata
+            ;;
+        check_ports)
+            check_ports
+            ;;
+        update-apps)
+            update-apps
+            ;;
+        return)
+            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+            
+            case $gum_main_option in
+                Privacy)
+                    privacy_menu
+                    ;;
+                Security)
+                    security_menu
+                    ;;
+                Encryption)
+                    encryption_menu
+                    ;;
+                Info)
+                    info
+                    ;;
+                License)
+                    license_menu
+                    ;;
+                Exit)
+                    return 0
+                    ;;
+            esac
         ;;
         exit)
             return 0
@@ -100,62 +151,10 @@ generate-passwd() {
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
 }
 
-# Security
-security_menu() {
-    echo
-    gum_security_menu=$(gum choose audit-system empty-trash delete-file emove_metadata update-apps check_ports return exit)
-
-    case $gum_security_menu in
-        audit-system )
-            audit-system 
-            ;;
-        empty-trash)
-            empty-trash
-            ;;
-        delete-file)
-            delete-file
-            ;;
-        remove_metadata)
-            remove_metadata
-            ;;
-        check_ports)
-            check_ports
-            ;;
-        update-apps)
-            update-apps
-            ;;
-        return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license_menu
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
-        ;;
-        exit)
-            return 0
-        ;;
-    esac
-}
 check_ports() {
     netstat -tuln
 }
+
 audit-system() {
     echo "Installing tool:  "
     sudo apt update
