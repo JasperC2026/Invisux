@@ -40,7 +40,7 @@ RESET="\e[0m"
 
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "Generate a password" "return" "exit")
+    gum_privacy_menu=$(gum choose "return" "exit")
 
     case $gum_privacy_menu in
         return)
@@ -726,43 +726,23 @@ info() {
     echo "test"
 }
 license_menu() {
-    gum_license_menu=$(gum choose full-license overview name-of-license return exit)
+    echo
+    gum_license_menu=$(gum choose "Full license" "TL;DR" "License name" Return Exit)
 
     case $gum_license_menu in
-        full-license)
+        "Full license")
             full-license
             ;;
-        overview)
+        "TL;DR")
             license_overview
             ;;
-        name-of-license)
+        "License name")
             name-of-license
             ;;
-        return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license_menu
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
+        Return)
+            main_menu
             ;;
-        exit)
+        Exit)
             return 0
             ;;
     esac
@@ -777,7 +757,12 @@ You are free to use, copy, modify, and distribute this software for any purpose.
 EOF
 }
 name-of-license() {
-    echo "GPL V3"
+    echo "License: GNU General Public License v3"
+}
+
+# Alliases
+license() {
+    full-license
 }
 # Command dispatcher
 _INVISUX_COMMANDS=(
