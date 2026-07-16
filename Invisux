@@ -299,31 +299,10 @@ encryption_menu() {
             aes_menu
             ;;
         GPG)
-            echo "test"
+            gpg_menu
             ;;
         return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license_menu
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
+            main_menu
         ;;
         exit)
             return 0
@@ -676,34 +655,34 @@ decrypt_256() {
 }
 
 gpg_menu() {
-    gpg_options=$(gum choose generate-key delete-key import-key export-key list-keys sign verify)
+    gpg_options=$(gum choose "Generate a key" "Delete a key" "Import a key" "Export a key" "List keys" "Sign a key" "Verify a key" Return Exit)
 
     case $gpg_options in
-        generate-key)
+        "Generate a key")
             generate-key
         ;;
-        delete-key)
+        "Delete a key")
             delete-key
         ;;
-        import-key)
+        "Import a key")
             import-key
         ;;
-        export-key)
+        "Export a key")
             export-key
         ;;
-        list-keys)
+        "List keys")
             list-keys
         ;;
-        sign)
+        "Sign a key")
             sign
         ;;
-        verify)
+        "Verify a key")
             verify
         ;;
-        return)
+        Return)
             gum_encryption_menu
         ;;
-        exit)
+        Exit)
             return 0
         ;;
     esac
@@ -715,15 +694,16 @@ generate-key() {
 
 delete-key() {
     read -p "Username:  " username
+
     echo "Enter kind of key:    "
     answer=$(gum choose public private)
 
     case $answer in
         public)
-            gpg --delete-key $username 
+            gum confirm "Delete key for: $username?" && gpg --delete-key $username 
         ;;
         private)
-            gpg --delete-secret-key $username
+            gum confirm "Delete key for: $username?" && gpg --delete-secret-key $username
         ;;
     esac
 }
