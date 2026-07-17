@@ -40,13 +40,13 @@ RESET="\e[0m"
 
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "return" "exit")
+    gum_privacy_menu=$(gum choose "Return" "Exit")
 
     case $gum_privacy_menu in
-        return)
+        Return)
             main_menu
         ;;
-        exit)
+        Exit)
             return 0
         ;;
     esac
@@ -55,55 +55,34 @@ privacy_menu() {
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" audit-system empty-trash delete-file emove_metadata update-apps check_ports return exit)
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Remove metadata" "Update apps" "Check ports" Return Exit)
 
     case $gum_security_menu in
         "Generate a password")
             generate-passwd
             ;;    
-        audit-system )
+        "Audit system")
             audit-system 
             ;;
-        empty-trash)
+        "Empty trash")
             empty-trash
             ;;
-        delete-file)
+        "Delete a file")
             delete-file
             ;;
-        remove_metadata)
+        "Remove metadata")
             remove_metadata
             ;;
-        check_ports)
+        "Check ports")
             check_ports
             ;;
-        update-apps)
+        "Update apps")
             update-apps
             ;;
-        return)
-            gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
-            
-            case $gum_main_option in
-                Privacy)
-                    privacy_menu
-                    ;;
-                Security)
-                    security_menu
-                    ;;
-                Encryption)
-                    encryption_menu
-                    ;;
-                Info)
-                    info
-                    ;;
-                License)
-                    license_menu
-                    ;;
-                Exit)
-                    return 0
-                    ;;
-            esac
+        Return)
+            main_menu
         ;;
-        exit)
+        Exit)
             return 0
         ;;
     esac
@@ -261,18 +240,23 @@ update-apps() {
         
         case "$choice" in
             "APT")
+                echo
                 sudo apt update -y && sudo apt upgrade -y
                 ;;
             "Snap")
+                echo
                 sudo snap refresh
                 ;;
             "Pacman")
+                echo
                 sudo pacman -Syu --quiet --noconfirm
                 ;;
             "DNF")
+                echo
                 sudo dnf upgrade --assumeyes
                 ;;
             "Zypper")
+                echo
                 sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
                 ;;
         esac
@@ -283,7 +267,7 @@ update-apps() {
 
 encryption_menu() {
     echo
-    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG return exit)
+    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG Return Exit)
     
     case $gum_encryption_menu in
         Hash)
@@ -301,10 +285,10 @@ encryption_menu() {
         GPG)
             gpg_menu
             ;;
-        return)
+        Return)
             main_menu
         ;;
-        exit)
+        Exit)
             return 0
         ;;
     esac
@@ -401,7 +385,7 @@ keys() {
 }
 
 aes_menu() {
-    aes_options=$(gum choose Decrypt Encrypt return exit )
+    aes_options=$(gum choose Decrypt Encrypt Return Exit )
 
     case $aes_options in
         Decrypt)
@@ -410,17 +394,17 @@ aes_menu() {
         Encrypt)
             aes_encrypt
             ;;
-        return)
+        Return)
             encryption_menu
             ;;
-        exit)
+        Exit)
             return 0
             ;;
     esac
 }
 
 aes_decrypt() {
-    aes_decrypt_options=$(gum choose AES-128 AES-256)
+    aes_decrypt_options=$(gum choose AES-128 AES-256 Return Exit)
 
     case $aes_decrypt_options in
         AES-128)
@@ -429,17 +413,17 @@ aes_decrypt() {
         AES-256)
             decrypt_256
             ;;
-        return)
+        Return)
             aes_menu
             ;;
-        exit)
+        Exit)
             return 0
             ;;
     esac
 }
 
 aes_encrypt() {
-    aes_encrypt_options=$(gum choose AES-128 AES-256 return exit)
+    aes_encrypt_options=$(gum choose AES-128 AES-256 Return Exit)
 
     case $aes_encrypt_options in
         AES-128)
@@ -448,10 +432,10 @@ aes_encrypt() {
         AES-256)
             encrypt_256
             ;;
-        return)
+        Return)
             aes_menu
             ;;
-        exit)
+        Exit)
             return 0
             ;;
     esac
