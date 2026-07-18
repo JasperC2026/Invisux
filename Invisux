@@ -150,7 +150,7 @@ audit-system() {
     status=$?
     error_check
 }
-emoty_trash() {
+empty_trash() {
     TRASH_FILES="$HOME/.local/share/Trash/files"
     TRASH_INFO="$HOME/.local/share/Trash/info"
 
@@ -918,6 +918,18 @@ error_check() {
 license() {
     full-license
 }
+key() {
+    generate-key
+}
+password() {
+    generate-passwd
+}
+trash() {
+    emoty_trash
+}
+apps() {
+    update_apps
+}
 # Command dispatcher
 _INVISUX_COMMANDS=(
     license
@@ -940,7 +952,7 @@ _INVISUX_COMMANDS=(
     aes_decrypt
     keys
     update-apps
-    emoty_trash
+    empty_trash
     delete-file
     explainer_encryption
     generate-key
