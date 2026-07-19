@@ -90,8 +90,8 @@ security_menu() {
 generate-passwd() {
     echo "Password length: (between 8 and 128)"
 
-    length=$(gum input --placeholder "Password length")
-    length=${length:-16}
+    local length=$(gum input --placeholder "Password length")
+    local length=${length:-16}
 
     if [[ ! "$length" =~ ^[0-9]+$ ]]; then
         echo "Invalid input for lenght"
@@ -203,7 +203,7 @@ empty_trash() {
 delete-file() {
     echo "Select a file to be removed:  "
 
-    file=$(gum file)
+    local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
@@ -211,7 +211,7 @@ delete-file() {
     fi
 
     echo "Are you sure to remove $file?"
-    confirm=$(gum choose yes no)
+    local confirm=$(gum choose yes no)
 
     case $confirm in
         no)
@@ -233,7 +233,7 @@ delete-file() {
 
 remove_metadata() {
     echo "Select a file:    "
-    file=$(gum file)
+    local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
@@ -247,10 +247,10 @@ remove_metadata() {
 }
 
 update-apps() {
-    options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
+    local options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
 
     echo "Are you sure?"
-    confirm=$(gum choose yes no)
+    local confirm=$(gum choose yes no)
 
     case $confirm in
         no)
@@ -323,26 +323,26 @@ encryption_menu() {
 }
 hash-passwd() {
     echo "Choose a password to hash"
-    hash=$(gum input --placeholder "Password" )
+    local hash=$(gum input --placeholder "Password" )
 
     echo "Choose a protocol:    "
-    protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
+    local protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
 
     case $protocol in
         MD5)
-        output=$(openssl passwd -1 $hash)
+        local output=$(openssl passwd -1 $hash)
         ;;
         SHA256)
-        output=$(openssl passwd -5 $hash)
+        local output=$(openssl passwd -5 $hash)
         ;;
         SHA512)
-        output=$(openssl passwd -6 $hash)
+        local output=$(openssl passwd -6 $hash)
         ;;
         APR1)
-        output=$(openssl passwd -apr1 $hash)
+        local output=$(openssl passwd -apr1 $hash)
         ;;
         AIX)
-        output=$(openssl passwd -aixmd5 $hash)
+        local output=$(openssl passwd -aixmd5 $hash)
         ;;
     esac
 
@@ -381,7 +381,7 @@ EOF
 }
 
 keys() {
-    key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
+    local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
     echo "You selected $key_size as your key size"
 
     case $key_size in
@@ -402,7 +402,7 @@ keys() {
     echo "Here is your key: $key"
     echo "Want to save it to a file?"
 
-    saving_to_file=$(gum choose yes no)
+    local saving_to_file=$(gum choose yes no)
 
     case $saving_to_file in
         yes)
@@ -477,12 +477,12 @@ aes_encrypt() {
 }
 
 encrypt_128() {
-    text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
         echo "Enter file:   "
-        file=$(gum file)
+        local file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
@@ -496,7 +496,7 @@ encrypt_128() {
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        delete_choice=$(gum choose yes no)
+        local delete_choice=$(gum choose yes no)
         case $delete_choice in
             yes)
                 shred -u -- "$file"
@@ -507,7 +507,7 @@ encrypt_128() {
         esac
         ;;
         text)
-        text=$(gum write)
+        local text=$(gum write)
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
@@ -530,12 +530,12 @@ encrypt_128() {
 }
 
 encrypt_256() {
-    text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
         echo "Enter file:   "
-        file=$(gum file)
+        local file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
@@ -549,7 +549,7 @@ encrypt_256() {
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        delete_choice=$(gum choose yes no)
+        local delete_choice=$(gum choose yes no)
         case $delete_choice in
             yes)
                 shred -u -- "$file"
@@ -560,7 +560,7 @@ encrypt_256() {
         esac
         ;;
         text)
-        text=$(gum write)
+        local text=$(gum write)
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
@@ -582,7 +582,7 @@ encrypt_256() {
 }
 
 decrypt_128() {
-    text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -601,7 +601,7 @@ decrypt_128() {
         echo "Unencrypted file:   $output_file.aes" 
 
         echo "Delete original encrypted file?"
-        delete_choice=$(gum choose yes no)
+        local elete_choice=$(gum choose yes no)
         case $delete_choice in
             yes)
                 shred -u -- "$file"
@@ -612,7 +612,7 @@ decrypt_128() {
         esac
         ;;
         text)
-        text=$(gum write)
+        local text=$(gum write)
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
@@ -634,7 +634,7 @@ decrypt_128() {
 }
 
 decrypt_256() {
-    text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text return exit)
 
     case $text_or_file in
         file)
@@ -653,7 +653,7 @@ decrypt_256() {
         echo "Unencrypted file:   $output_file.aes" 
 
         echo "Delete original encrypted file?"
-        delete_choice=$(gum choose yes no)
+        local delete_choice=$(gum choose yes no)
         case $delete_choice in
             yes)
                 shred -u -- "$file"
@@ -664,7 +664,7 @@ decrypt_256() {
         esac
         ;;
         text)
-        text=$(gum write)
+        local text=$(gum write)
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
@@ -730,7 +730,7 @@ delete-key() {
     read -p "Username:  " username
 
     echo "Enter kind of key:    "
-    answer=$(gum choose public private)
+    local answer=$(gum choose public private)
 
     case $answer in
         public)
@@ -747,7 +747,7 @@ delete-key() {
 
 import-key() {
     echo "Select a file:    "
-    file=$(gum file)
+    local file=$(gum file)
 
     gpg --import $file
 
@@ -777,7 +777,7 @@ list-keys() {
 
 sign() {
     echo "Select a file:    "
-    file=$(gum file)
+    local file=$(gum file)
 
     gpg --sign $file
 
@@ -787,7 +787,7 @@ sign() {
 
 verify() {
     echo "Select a file:    "
-    file=$(gum file)
+    local file=$(gum file)
 
 	gpg --verify $file
 
