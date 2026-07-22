@@ -870,47 +870,48 @@ name-of-license() {
 
 # Error handling
 error_check() {
+    echo
     echo "Error status: "
 
     case $status in
         0)
-            echo "Succes / no error"
+            echo -e "${GREEN}[✔] Succes / no error${RESET}"
         ;;
         1)
-            echo "General/catchall error"
+            echo -e "${RED}[!] General/catchall error${RESET}"
         ;;
         2)
-            echo "Misuse of shell builtin"
+            echo -e "${RED}[!] Misuse of shell builtin${RESET}"
         ;;
         3)
-            echo "General: Invalid input"
+            echo -e "${RED}[!] Invalid input${RESET}"
             ;;
         4)
-            echo "Input does not meet the requirements of the input"
+            echo -e "${RED}[!] Input does not meet the requirements of the input${RESET}"
             ;;
         5)
-            echo "Empty input"
+            echo -e "${RED}[!] Empty input${RESET}"
             ;;
         6)
-            echo "Action aborted"
+            echo -e "[↩] Action aborted${RESET}"
             ;;
         126)
-            echo "Command found but not executable"
+            echo -e "${RED}[!] Command found but not executable${RESET}"
             ;;
         127)
-            echo "Command not found"
+            echo -e "${RED}[!] Command not found${RESET}"
             ;;
         128)
-            echo "Invalid argument to exit"
+            echo -e "${RED}[!] Invalid argument to exit${RESET}"
             ;;
         128+N)
-            echo "Terminated by signal N"
+            echo -e "${RED}[!] Terminated by signal N${RESET}"
             ;;
         255)
-            echo "Exit status out of range / uncaught error"
+            echo -e "${RED}[!] Exit status out of range / uncaught error${RESET}"
             ;;
         *)
-            echo "Unhandled exit status: $status" >&2
+            echo -e "${RED}[!] Unhandled exit status: $status${RESET}" >&2
         ;;
     esac
 }
