@@ -64,7 +64,7 @@ security_menu() {
             audit-system 
             ;;
         "Empty trash")
-            empty-trash
+            empty_trash
             ;;
         "Delete a file")
             delete-file
@@ -95,14 +95,18 @@ generate-passwd() {
 
     if [[ ! "$length" =~ ^[0-9]+$ ]]; then
         echo "Invalid input for lenght"
-        return 3
+        status=3
+        error_check
+        return 0
     fi
 
     if [ "$length" -ge 7 ] && [ "$length" -le 129 ]; then
         echo "You selected $length as your lenght size"
     else
         echo "You selected a lenght not supported"
-        return 4
+        status=4
+        error_check
+        return 0
     fi
 
     local pass_alnum
@@ -183,7 +187,9 @@ empty_trash() {
         animation_end
     else
         echo "Cancelled"
-        return 6
+        status=6
+        error_check
+        return 0
     fi
 
     local remaining
@@ -193,7 +199,9 @@ empty_trash() {
         echo "Succefully emptied"
     else
         echo "Some items may remain, check manually"
-        return 1
+        status=1
+        error_check
+        return 0
     fi
 
     status=$?
@@ -207,7 +215,9 @@ delete-file() {
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
-        return 5
+        status=5
+        error_check
+        return 0
     fi
 
     echo "Are you sure to remove $file?"
@@ -215,8 +225,9 @@ delete-file() {
 
     case $confirm in
         no)
-            return 6
-            ;;
+            status=6
+            error_check
+            return 0
     esac
 
     animation_begin
@@ -237,7 +248,9 @@ remove_metadata() {
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
-        return 5
+        status=5
+        error_check
+        return 0
     fi
 
     gum confirm "Edit $file?" && exiftool -all= $file
@@ -247,23 +260,27 @@ remove_metadata() {
 }
 
 update-apps() {
-    local options=$(gum choose --no-limit APT Snap Pacman DNF Zypper)
+    local options=$(gum choose --no-limit APT Snap Pacman DNF Yum Zypper)
 
     echo "Are you sure?"
     local confirm=$(gum choose yes no)
 
     case $confirm in
         no)
-            return 6
+            status=6
+            error_check
+            return 0
             ;;
     esac
 
     echo "You selected $(echo "$options" | wc -l) package manager(s)"
     echo ""
 
+    status=0
+
     while IFS= read -r choice; do
         echo "Processing selection: $choice"
-        
+
         case "$choice" in
             "APT")
                 echo
@@ -281,14 +298,23 @@ update-apps() {
                 echo
                 sudo dnf upgrade --assumeyes
                 ;;
+            "Yum")
+                echo 
+                sudo yum update -y
+                ;;
             "Zypper")
                 echo
                 sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
                 ;;
         esac
+
+        # Track the worst exit status across all iterations
+        local cmd_status=$?
+        if (( cmd_status > status )); then
+            status=$cmd_status
+        fi
     done <<< "$options"
 
-    status=$?
     error_check
 }
 
@@ -486,7 +512,9 @@ encrypt_128() {
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
-            return 5
+            status=5
+            error_check
+            return 0
         fi
         
         read -p "Enter file to write to (no extension added):    " output_file
@@ -511,7 +539,9 @@ encrypt_128() {
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
@@ -539,7 +569,9 @@ encrypt_256() {
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         read -p "Enter file to write to (no extension added):    " output_file
@@ -564,7 +596,9 @@ encrypt_256() {
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
@@ -591,7 +625,9 @@ decrypt_128() {
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         read -p "Enter file to write to (no extension added):    " output_file
@@ -616,7 +652,9 @@ decrypt_128() {
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
@@ -643,7 +681,9 @@ decrypt_256() {
 
         if [[ "$file" == "no file selected" ]]; then
             echo "No file was selected"
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         read -p "Enter file to write to (no extension added):    " output_file
@@ -668,7 +708,9 @@ decrypt_256() {
 
         if [[ -z "$text" ]]; then
             echo "No input provided" >&2
-            return 5
+            status=5
+            error_check
+            return 0
         fi
 
         printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
