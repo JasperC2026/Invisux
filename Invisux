@@ -39,13 +39,13 @@ RESET="\e[0m"
 # Privacy
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "Return" "Exit")
+    gum_privacy_menu=$(gum choose "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
-        Return)
+        "[↩] Return")
             main_menu
         ;;
-        Exit)
+        "➜] Exit")
             return 0
         ;;
     esac
@@ -54,7 +54,7 @@ privacy_menu() {
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Remove metadata" "Update apps" "Check ports" Return Exit)
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Remove metadata" "Update apps" "Check ports" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
         "Generate a password")
@@ -78,10 +78,10 @@ security_menu() {
         "Update apps")
             update-apps
             ;;
-        Return)
+        "[↩] Return")
             main_menu
         ;;
-        Exit)
+        "➜] Exit")
             return 0
         ;;
     esac
@@ -321,7 +321,7 @@ update-apps() {
 # Encryption
 encryption_menu() {
     echo
-    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG Return Exit)
+    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG "[↩] Return" "➜] Exit")
     
     case $gum_encryption_menu in
         Hash)
@@ -339,10 +339,10 @@ encryption_menu() {
         GPG)
             gpg_menu
             ;;
-        Return)
+        "[↩] Return")
             main_menu
         ;;
-        Exit)
+        "➜] Exit")
             return 0
         ;;
     esac
@@ -445,7 +445,7 @@ keys() {
 }
 
 aes_menu() {
-    aes_options=$(gum choose Decrypt Encrypt Return Exit )
+    aes_options=$(gum choose Decrypt Encrypt "[↩] Return" "➜] Exit" )
 
     case $aes_options in
         Decrypt)
@@ -454,17 +454,17 @@ aes_menu() {
         Encrypt)
             aes_encrypt
             ;;
-        Return)
+        "[↩] Return")
             encryption_menu
             ;;
-        Exit)
+        "➜] Exit")
             return 0
             ;;
     esac
 }
 
 aes_decrypt() {
-    aes_decrypt_options=$(gum choose AES-128 AES-256 Return Exit)
+    aes_decrypt_options=$(gum choose AES-128 AES-256 "[↩] Return" "➜] Exit")
 
     case $aes_decrypt_options in
         AES-128)
@@ -473,17 +473,17 @@ aes_decrypt() {
         AES-256)
             decrypt_256
             ;;
-        Return)
+        "[↩] Return")
             aes_menu
             ;;
-        Exit)
+        "➜] Exit")
             return 0
             ;;
     esac
 }
 
 aes_encrypt() {
-    aes_encrypt_options=$(gum choose AES-128 AES-256 Return Exit)
+    aes_encrypt_options=$(gum choose AES-128 AES-256 "[↩] Return" "➜] Exit")
 
     case $aes_encrypt_options in
         AES-128)
@@ -492,10 +492,10 @@ aes_encrypt() {
         AES-256)
             encrypt_256
             ;;
-        Return)
+        "[↩] Return")
             aes_menu
             ;;
-        Exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -503,7 +503,7 @@ aes_encrypt() {
 }
 
 encrypt_128() {
-    local text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -547,10 +547,10 @@ encrypt_128() {
         printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
         
         ;;
-        return)
+        "[↩] Return")
             aes_encrypt
             ;;
-        exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -560,7 +560,7 @@ encrypt_128() {
 }
 
 encrypt_256() {
-    local text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -603,10 +603,10 @@ encrypt_256() {
 
         printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
         ;;
-        return)
+        "[↩] Return")
             aes_encrypt
             ;;
-        exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -616,7 +616,7 @@ encrypt_256() {
 }
 
 decrypt_128() {
-    local text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -659,10 +659,10 @@ decrypt_128() {
 
         printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
         ;;
-        return)
+        "[↩] Return")
             aes_decrypt
             ;;
-        exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -672,7 +672,7 @@ decrypt_128() {
 }
 
 decrypt_256() {
-    local text_or_file=$(gum choose file text return exit)
+    local text_or_file=$(gum choose file text return "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -715,10 +715,10 @@ decrypt_256() {
 
         printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
         ;;
-        return)
+        "[↩] Return")
             aes_decrypt
             ;;
-        exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -728,7 +728,7 @@ decrypt_256() {
 }
 
 gpg_menu() {
-    gpg_options=$(gum choose "Generate a key" "Delete a key" "Import a key" "Export a key" "List keys" "Sign a key" "Verify a key" Return Exit)
+    gpg_options=$(gum choose "Generate a key" "Delete a key" "Import a key" "Export a key" "List keys" "Sign a key" "Verify a key" "[↩] Return" "➜] Exit")
 
     case $gpg_options in
         "Generate a key")
@@ -752,10 +752,10 @@ gpg_menu() {
         "Verify a key")
             verify
         ;;
-        Return)
+        "[↩] Return")
             gum_encryption_menu
         ;;
-        Exit)
+        "➜] Exit")
             return 0
         ;;
     esac
@@ -874,7 +874,7 @@ EOF
 
 license_menu() {
     echo
-    gum_license_menu=$(gum choose "Full license" "TL;DR" "License name" Return Exit)
+    gum_license_menu=$(gum choose "Full license" "TL;DR" "License name" "[↩] Return" "➜] Exit")
 
     case $gum_license_menu in
         "Full license")
@@ -886,10 +886,10 @@ license_menu() {
         "License name")
             name-of-license
             ;;
-        Return)
+        "[↩] Return")
             main_menu
             ;;
-        Exit)
+        "➜] Exit")
             return 0
             ;;
     esac
@@ -1008,7 +1008,7 @@ _invisux_main_command() {
     main_menu
 }
 main_menu() {
-    gum_main_option=$(gum choose Privacy Security Encryption Info License Exit)
+    gum_main_option=$(gum choose Privacy Security Encryption Info License "➜] Exit")
     
     case $gum_main_option in
         Privacy)
@@ -1026,7 +1026,7 @@ main_menu() {
         License)
             license_menu
             ;;
-        Exit)
+        "➜] Exit")
             return 0
             ;;
     esac
