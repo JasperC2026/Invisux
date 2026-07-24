@@ -39,9 +39,13 @@ RESET="\e[0m"
 # Privacy
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "[↩] Return" "➜] Exit")
+    # Upcoming ideas: Check DNS resolution Verify DNS config Randomize MAC addresses Verify Tor is running Check public IP 
+    gum_privacy_menu=$(gum choose "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
+        "Remove metadata")
+            remove_metadata
+            ;;
         "[↩] Return")
             main_menu
         ;;
@@ -54,9 +58,10 @@ privacy_menu() {
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Remove metadata" "Update apps" "Check ports" "[↩] Return" "➜] Exit")
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Update apps" "Check ports" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
+        # Add veracrypt
         "Generate a password")
             generate-passwd
             ;;    
@@ -68,9 +73,6 @@ security_menu() {
             ;;
         "Delete a file")
             delete-file
-            ;;
-        "Remove metadata")
-            remove_metadata
             ;;
         "Check ports")
             check_ports
