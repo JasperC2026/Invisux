@@ -40,12 +40,15 @@ RESET="\e[0m"
 privacy_menu() {
     echo
     # Upcoming ideas: Check DNS resolution Verify DNS config Randomize MAC addresses Verify Tor is running Check public IP 
-    gum_privacy_menu=$(gum choose "Remove metadata" "[↩] Return" "➜] Exit")
+    gum_privacy_menu=$(gum choose "Network" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
+        "Network")
+            network_menu
+        ;;
         "Remove metadata")
-            remove_metadata
-            ;;
+        remove_metadata
+        ;;
         "[↩] Return")
             main_menu
         ;;
@@ -54,14 +57,94 @@ privacy_menu() {
         ;;
     esac
 }
+network_menu() {
+    gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
 
+    case $gum_network_menu in
+        "Check ports")
+            check_ports
+            ;;
+        "Check DNS resolution")
+            dns_res
+            ;;
+        "Verify DNS Config")
+            dns_conf
+            ;;
+        "Randomize MAC adress")
+            rand_mac
+            ;;
+        "Check TOR")
+            check_tor
+            ;;
+        "Check IP")
+            check_ip
+            ;;
+        "[↩] Return")
+            main_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+check_ports() {
+    netstat -tuln
+
+    status=$?
+    error_check
+}
+dns_res() {
+    echo "Checking DNS resolution with testing to reach a server"
+    echo
+    dig 9.9.9.9
+
+    status=$?
+    error_check
+}
+dns_conf() {
+    echo "DNS nameserver:   "
+    cat /etc/resolv.conf | grep nameserver
+    echo
+
+    echo "NetworkManager systems:   "
+    nmcli dev show | grep IP4.DNS
+    echo
+
+    echo "Default gateway:  "
+    ip route show
+    echo
+
+    echo "systemd-resolved systems: "
+    resolvectl status
+
+    status=$?
+    error_check
+}
+rand_mac() {
+    sudo ip link set eth0 down
+    sudo ip link set eth0 address $(xxd -c1 -l6 /dev/urandom | tr -dc '[:xdigit:]' | head -c17)
+    sudo ip link set eth0 up
+
+    status=$?
+    error_check
+}
+check_tor() {
+    echo "Service status:   "
+    systemctl status tor 
+
+    echo
+    echo "Open check.torproject.org in your browser to check if tor is used"
+}
+check_ip() {
+    ip=$(curl ifconfig.me)
+    echo "Your IP is: $ip"
+}
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Update apps" "Check ports" "[↩] Return" "➜] Exit")
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Update apps" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
-        # Add veracrypt
         "Generate a password")
             generate-passwd
             ;;    
@@ -73,9 +156,6 @@ security_menu() {
             ;;
         "Delete a file")
             delete-file
-            ;;
-        "Check ports")
-            check_ports
             ;;
         "Update apps")
             update-apps
@@ -133,13 +213,6 @@ generate-passwd() {
     entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
 
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
-
-    status=$?
-    error_check
-}
-
-check_ports() {
-    netstat -tuln
 
     status=$?
     error_check
@@ -1003,6 +1076,11 @@ _INVISUX_COMMANDS=(
     generate-key
     remove_metadata
     audit-system
+    dns_res
+    dns_conf
+    rand_mac
+    check_ip
+    check_tor
 )
 
 # Main command
