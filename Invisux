@@ -40,14 +40,17 @@ RESET="\e[0m"
 privacy_menu() {
     echo
     # Upcoming ideas: Check DNS resolution Verify DNS config Randomize MAC addresses Verify Tor is running Check public IP 
-    gum_privacy_menu=$(gum choose "Network" "Remove metadata" "[↩] Return" "➜] Exit")
+    gum_privacy_menu=$(gum choose "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
+        "Random data")
+            random_data
+        ;;
         "Network")
             network_menu
         ;;
         "Remove metadata")
-        remove_metadata
+            remove_metadata
         ;;
         "[↩] Return")
             main_menu
@@ -56,6 +59,11 @@ privacy_menu() {
             return 0
         ;;
     esac
+}
+random_data() {
+    # Random name generator
+    # Random string generator
+    # Random username generator
 }
 network_menu() {
     gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
