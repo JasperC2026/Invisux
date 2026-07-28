@@ -113,7 +113,7 @@ hide_dot() {
 
     error_check
 }
-oncatenation() {
+concatenation() {
     local dependencie=zip
     dependencie_checker
 
@@ -1292,7 +1292,7 @@ _INVISUX_COMMANDS=(
     check_tor
     hide_files
     hide_dot
-    oncatenation
+    concatenation
     steganography
     random_data
 )
