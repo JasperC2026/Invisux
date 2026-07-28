@@ -1,10 +1,5 @@
 #!/bin/bash
 
-echo "Installing dependencies:  "
-sudo apt update && sudo apt install gum gpg openssl shred 
-
-echo "Done"
-
 echo "Choose an option: "
 choice=$(gum choose "See version" "See license" "Install" "Update")
 

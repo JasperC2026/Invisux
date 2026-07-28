@@ -24,12 +24,17 @@ Features: password generation, system auditing, emptying trash, deleting file (s
 Features: networking options including mac adress randomization, checking tor/public ip, checking ports, dns options. Removing meta data from files.
 
 ## Dependencies
-The tool needs gum to operate the rest of the dependencies are optional depending on which tools you use. 
-- openSSL and GPG: encryption
-- lynis: auditing
-- shred: deleting files
-- exiftool: deleting metadata
-- dig, netstat. ip and curl: network options
+The tool needs gum to operate and the loading animation (see installer). The rest of dependencies are optional and are handled by the tool. 
+
+List:
+gum **REQUIRED**
+invisux_loading.sh **REQUIRED**
+faker **OPTIONAL**
+openssl **OPTIONAL**
+shred **OPTIONAL**
+exiftool **OPTIONAL**
+gpg **OPTIONAL**
+
 
 ## Contributing
 Contributions are welcome, message me or open a PR to start.

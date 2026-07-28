@@ -15,6 +15,34 @@ animation_begin() {
 animation_end() {
     BLA::stop_loading_animation
 }
+dependencie_checker() {
+    if ! command -v $dependencie >/dev/null 2>&1; then
+        echo "$dependencie not installed"
+        echo "Install $dependencie?"
+        local answer=$(gum choose yes no)
+
+        case $answer in
+            yes)
+            echo "Choose package manager:   "
+            local package_manager=$(gum choose apt dnf pacman)
+            
+            case $package_manager in
+                apt)
+                sudo apt install -y $dependencie 
+                ;;
+                dnf)
+                sudo dnf install --assumeyes $dependencie
+                ;;
+                pacman)
+                sudo pacman -S --noconfirm $dependencie 
+            esac
+            ;;     
+            no)
+            return 0
+            ;;
+        esac
+    fi
+}
 
 # Variables
 DIVIDER="───────────────────────────────────────────────────────────────"
@@ -39,7 +67,6 @@ RESET="\e[0m"
 # Privacy
 privacy_menu() {
     echo
-    # Upcoming ideas: Check DNS resolution Verify DNS config Randomize MAC addresses Verify Tor is running Check public IP 
     gum_privacy_menu=$(gum choose "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
@@ -60,18 +87,24 @@ privacy_menu() {
         ;;
     esac
 }
+
 random_data() {
     data_menu=$(gum choose "Random name" "String" "Random username")
 
     case $data_menu in
         "Random name")
-        sudo apt install faker
+        local dependencie=faker
+        dependencie_checker
 
-        faker name
+        name=faker name
+        echo "${BOLD} $name ${RESET}"
         ;;
         "String")
         echo "Select size:  "
         local numbers=$(gum input --placeholder "Total numbers of characters")
+
+        local dependencie=openssl
+        dependencie_checker
 
         openssl rand -base64 $numbers
         ;;
@@ -79,6 +112,8 @@ random_data() {
         echo "Visit https://proton.me/pass/username-generator or if you use tor https://protonmailrmez3lotccipshtkleegetolb73fuirgj7r4o4vfu7ozyd.onion/pass/username-generator."
         ;;
     esac
+
+    error_check
 }
 network_menu() {
     gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
@@ -119,6 +154,10 @@ check_ports() {
 dns_res() {
     echo "Checking DNS resolution with testing to reach a server"
     echo
+
+    local dependencie=dig
+    dependencie_checker
+
     dig 9.9.9.9
 
     status=$?
@@ -193,6 +232,9 @@ security_menu() {
 }
 
 generate-passwd() {
+    local dependencie=openssl
+    dependencie_checker
+
     echo "Password length: (between 8 and 128)"
 
     local length=$(gum input --placeholder "Password length")
@@ -242,17 +284,18 @@ generate-passwd() {
 }
 
 audit-system() {
-    echo "Installing tool:  "
-    sudo apt update
-    sudo apt install lynis 
-    
-    echo "Running tool: "
+    local dependencie=lynis
+    dependencie_checker
+
     sudo lynis audit system
 
     status=$?
     error_check
 }
 empty_trash() {
+    local dependencie=shred
+    dependencie_checker
+
     TRASH_FILES="$HOME/.local/share/Trash/files"
     TRASH_INFO="$HOME/.local/share/Trash/info"
 
@@ -310,6 +353,9 @@ empty_trash() {
 }
 
 delete-file() {
+    local dependencie=shred
+    dependencie_checker
+
     echo "Select a file to be removed:  "
 
     local file=$(gum file)
@@ -344,6 +390,9 @@ delete-file() {
 }
 
 remove_metadata() {
+    local dependencie=exiftool
+    dependencie_checker
+
     echo "Select a file:    "
     local file=$(gum file)
 
@@ -449,6 +498,9 @@ encryption_menu() {
     esac
 }
 hash-passwd() {
+    local dependencie=openssl
+    dependencie_checker
+
     echo "Choose a password to hash"
     local hash=$(gum input --placeholder "Password" )
 
@@ -508,6 +560,9 @@ EOF
 }
 
 keys() {
+    local dependencie=openssl
+    dependencie_checker
+
     local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
     echo "You selected $key_size as your key size"
 
@@ -604,6 +659,9 @@ aes_encrypt() {
 }
 
 encrypt_128() {
+    local dependencie=openssl
+    dependencie_checker
+
     local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
@@ -661,6 +719,9 @@ encrypt_128() {
 }
 
 encrypt_256() {
+    local dependencie=openssl
+    dependencie_checker
+
     local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
@@ -717,6 +778,9 @@ encrypt_256() {
 }
 
 decrypt_128() {
+    local dependencie=openssl
+    dependencie_checker
+
     local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
@@ -773,6 +837,9 @@ decrypt_128() {
 }
 
 decrypt_256() {
+    local dependencie=openssl
+    dependencie_checker
+
     local text_or_file=$(gum choose file text return "[↩] Return" "➜] Exit")
 
     case $text_or_file in
@@ -863,6 +930,9 @@ gpg_menu() {
 }
 
 generate-key() {
+    local dependencie=gpg
+    dependencie_checker
+
     gpg --gen-key
 
     status=$?
@@ -870,6 +940,9 @@ generate-key() {
 } 
 
 delete-key() {
+    local dependencie=gpg
+    dependencie_checker
+
     read -p "Username:  " username
 
     echo "Enter kind of key:    "
@@ -889,6 +962,9 @@ delete-key() {
 }
 
 import-key() {
+    local dependencie=gpg
+    dependencie_checker
+
     echo "Select a file:    "
     local file=$(gum file)
 
@@ -899,6 +975,9 @@ import-key() {
 } 
 
 export-key() {
+    local dependencie=gpg
+    dependencie_checker
+
     read -p "Enter your username:   " username
     read -p "Enter file to write to (no extension added):    " file
 
@@ -909,6 +988,9 @@ export-key() {
 } 
 
 list-keys() {
+    local dependencie=gpg
+    dependencie_checker
+
     echo "Public:   "
     gpg --list-keys
     echo "Secret:   "
@@ -919,6 +1001,9 @@ list-keys() {
 } 
 
 sign() {
+    local dependencie=gpg
+    dependencie_checker
+
     echo "Select a file:    "
     local file=$(gum file)
 
@@ -929,6 +1014,9 @@ sign() {
 }
 
 verify() {
+    local dependencie=gpg
+    dependencie_checker
+
     echo "Select a file:    "
     local file=$(gum file)
 
