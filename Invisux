@@ -61,10 +61,24 @@ privacy_menu() {
     esac
 }
 random_data() {
-    # Random name generator
-    # Random string generator
-    # Random username generator
-    echo
+    data_menu=$(gum choose "Random name" "String" "Random username")
+
+    case $data_menu in
+        "Random name")
+        sudo apt install faker
+
+        faker name
+        ;;
+        "String")
+        echo "Select size:  "
+        local numbers=$(gum input --placeholder "Total numbers of characters")
+
+        openssl rand -base64 $numbers
+        ;;
+        "Random username")
+        echo "Visit https://proton.me/pass/username-generator or if you use tor https://protonmailrmez3lotccipshtkleegetolb73fuirgj7r4o4vfu7ozyd.onion/pass/username-generator."
+        ;;
+    esac
 }
 network_menu() {
     gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
