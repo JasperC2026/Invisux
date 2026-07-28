@@ -392,13 +392,6 @@ generate-passwd() {
     local length=$(gum input --placeholder "Password length")
     local length=${length:-16}
 
-    if [[ -z "$lenght" ]]; then
-        echo "No input provided" >&2
-        status=5
-        error_check
-        return 0
-    fi
-
     if [[ ! "$length" =~ ^[0-9]+$ ]]; then
         echo "Invalid input for lenght"
         status=3
