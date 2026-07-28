@@ -36,6 +36,8 @@ exiftool **OPTIONAL**
 gpg **OPTIONAL**
 steghide **OPTIONAL**
 
+## All commands
+coming soon
 
 ## Contributing
 Contributions are welcome, message me or open a PR to start.
