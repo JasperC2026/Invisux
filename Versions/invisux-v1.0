@@ -1,0 +1,1437 @@
+#!/bin/bash
+
+# Licensed under GPL-3.0 
+# You are free to use, copy, modify, and distribute this software for any purpose.
+# With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact.
+# You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
+
+# Loading animations source
+source /usr/local/bin/invisux_loading.sh 
+
+# Shared commands
+animation_begin() {
+    BLA::start_loading_animation "${BLA_classic_utf8[@]}"
+}
+animation_end() {
+    BLA::stop_loading_animation
+}
+dependencie_checker() {
+    if ! command -v $dependencie >/dev/null 2>&1; then
+        echo "$dependencie not installed"
+        echo "Install $dependencie?"
+        local answer=$(gum choose yes no)
+
+        case $answer in
+            yes)
+            echo "Choose package manager:   "
+            local package_manager=$(gum choose apt dnf pacman)
+            
+            case $package_manager in
+                apt)
+                sudo apt install -y $dependencie 
+                ;;
+                dnf)
+                sudo dnf install --assumeyes $dependencie
+                ;;
+                pacman)
+                sudo pacman -S --noconfirm $dependencie 
+            esac
+            ;;     
+            no)
+            return 0
+            ;;
+        esac
+    fi
+}
+
+# Variables
+DIVIDER="───────────────────────────────────────────────────────────────"
+status_negative="${RED}[!]${RESET}"
+status_positive="${GREEN}[✔]${RESET}"
+forward="${GREEN}[➜]${RESET}" 
+arrow="➜"
+
+# Colors for ASCII art and use in output messages
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[93m"
+BLUE="\e[34m"
+CYAN="\e[36m"
+PURPLE="\e[35m"
+ORANGE="\e[38;5;208m"
+WHITE="\e[97m"    
+BLACK="\e[30m"   
+BOLD="\e[1m"
+RESET="\e[0m"
+
+# Privacy
+privacy_menu() {
+    echo
+    gum_privacy_menu=$(gum choose "Hide file(s)" "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
+
+    case $gum_privacy_menu in
+        "Hide file(s)")
+        hide_files
+        ;;
+        "Random data")
+            random_data
+        ;;
+        "Network")
+            network_menu
+        ;;
+        "Remove metadata")
+            remove_metadata
+        ;;
+        "[↩] Return")
+            main_menu
+        ;;
+        "➜] Exit")
+            return 0
+        ;;
+    esac
+}
+hide_files() {
+    hide_menu=$(gum choose "Hide in filesystem (low security)" "Concatenation in file (mid security)" "Steganography (very secure)")
+    
+    case $hide_menu in
+        "Hide in filesystem (low security)")
+        hide_dot
+        ;;
+        "Concatenation in file (mid security)")
+        concatenation
+        ;;
+        "Steganography (very secure)")
+        steganography
+        ;;
+    esac
+}
+hide_dot() {
+    echo "Enter file to hide"
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    mv $file .$file
+
+    error_check
+}
+concatenation() {
+    local dependencie=zip
+    dependencie_checker
+
+    echo "Enter file to hide"
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    zip=$(zip $file)
+
+    echo "Enter JPG image to hide the file in"
+    local jpg=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    cat $jpg $zip > $jpg
+
+    error_check
+}
+steganography() {
+    steg_menu=$(gum choose Embed Extract)
+    case $steg_menu in
+        Embed)
+            local dependencie=steghide
+            dependencie_checker
+
+            echo "Enter file to hide"
+            local file=$(gum file)
+
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
+
+            echo "Enter JPG image to hide the file in"
+            local jpg=$(gum file)
+
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
+
+            echo "Enter password to encrypt with:   "
+            local password=$(gum input --placeholder "Password")
+
+            if [[ -z "$password" ]]; then
+                echo "No input provided" >&2
+                status=5
+                error_check
+                return 0
+            fi
+
+            echo "Want to save it to a file?"
+
+            local saving_to_file=$(gum choose yes no)
+
+            case $saving_to_file in
+                yes)
+                read -p "Enter file name:   " file
+                echo -n "$password" >> $file
+                ;;
+            esac
+
+            steghide embed -cf $jpg -ef $file "$password"
+
+            error_check
+        ;;
+        Extract)
+            local dependencie=steghide
+            dependencie_checker
+
+            echo "Enter file it is hidden in:   "
+            local file=$(gum file)
+
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
+
+            echo "Enter password to decrypt with:   "
+            local password=$(gum input --placeholder "Password")
+
+            if [[ -z "$password" ]]; then
+                echo "No input provided" >&2
+                status=5
+                error_check
+                return 0
+            fi
+
+            steghide extract -sf $file "password"
+            
+            error_check
+        ;;
+    esac
+
+}
+random_data() {
+    data_menu=$(gum choose "Random name" "String" "Random username")
+
+    case $data_menu in
+        "Random name")
+        local dependencie=faker
+        dependencie_checker
+
+        name=faker name
+        echo "${BOLD} $name ${RESET}"
+        ;;
+        "String")
+        echo "Select size:  "
+        local numbers=$(gum input --placeholder "Total numbers of characters")
+
+        if [[ -z "$numbers" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
+
+        local dependencie=openssl
+        dependencie_checker
+
+        openssl rand -base64 $numbers
+        ;;
+        "Random username")
+        echo "Visit https://proton.me/pass/username-generator or if you use tor https://protonmailrmez3lotccipshtkleegetolb73fuirgj7r4o4vfu7ozyd.onion/pass/username-generator."
+        ;;
+    esac
+
+    error_check
+}
+network_menu() {
+    gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
+
+    case $gum_network_menu in
+        "Check ports")
+            check_ports
+            ;;
+        "Check DNS resolution")
+            dns_res
+            ;;
+        "Verify DNS Config")
+            dns_conf
+            ;;
+        "Randomize MAC adress")
+            rand_mac
+            ;;
+        "Check TOR")
+            check_tor
+            ;;
+        "Check IP")
+            check_ip
+            ;;
+        "[↩] Return")
+            main_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+check_ports() {
+    netstat -tuln
+
+    status=$?
+    error_check
+}
+dns_res() {
+    echo "Checking DNS resolution with testing to reach a server"
+    echo
+
+    local dependencie=dig
+    dependencie_checker
+
+    dig 9.9.9.9
+
+    status=$?
+    error_check
+}
+dns_conf() {
+    echo "DNS nameserver:   "
+    cat /etc/resolv.conf | grep nameserver
+    echo
+
+    echo "NetworkManager systems:   "
+    nmcli dev show | grep IP4.DNS
+    echo
+
+    echo "Default gateway:  "
+    ip route show
+    echo
+
+    echo "systemd-resolved systems: "
+    resolvectl status
+
+    status=$?
+    error_check
+}
+rand_mac() {
+    sudo ip link set eth0 down
+    sudo ip link set eth0 address $(xxd -c1 -l6 /dev/urandom | tr -dc '[:xdigit:]' | head -c17)
+    sudo ip link set eth0 up
+
+    status=$?
+    error_check
+}
+check_tor() {
+    echo "Service status:   "
+    systemctl status tor 
+
+    echo
+    echo "Open check.torproject.org in your browser to check if tor is used"
+}
+check_ip() {
+    ip=$(curl ifconfig.me)
+    echo "Your IP is: $ip"
+}
+# Security
+security_menu() {
+    echo
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Update apps" "[↩] Return" "➜] Exit")
+
+    case $gum_security_menu in
+        "Generate a password")
+            generate-passwd
+            ;;    
+        "Audit system")
+            audit-system 
+            ;;
+        "Empty trash")
+            empty_trash
+            ;;
+        "Delete a file")
+            delete-file
+            ;;
+        "Update apps")
+            update-apps
+            ;;
+        "[↩] Return")
+            main_menu
+        ;;
+        "➜] Exit")
+            return 0
+        ;;
+    esac
+}
+
+generate-passwd() {
+    local dependencie=openssl
+    dependencie_checker
+
+    echo "Password length: (between 8 and 128)"
+
+    local length=$(gum input --placeholder "Password length")
+    local length=${length:-16}
+
+    if [[ ! "$length" =~ ^[0-9]+$ ]]; then
+        echo "Invalid input for lenght"
+        status=3
+        error_check
+        return 0
+    fi
+
+    if [ "$length" -ge 7 ] && [ "$length" -le 129 ]; then
+        echo "You selected $length as your lenght size"
+    else
+        echo "You selected a lenght not supported"
+        status=4
+        error_check
+        return 0
+    fi
+
+    local pass_alnum
+    pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
+    
+    echo -e "  Alphanumeric : ${pass_alnum}${RESET}"
+
+    local pass_full
+    pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
+    
+    echo -e "  With symbols : ${pass_full}${RESET}"
+
+    local pass_hex
+    pass_hex=$(openssl rand -hex 64 | head -c "$length")
+
+    echo -e "  Hex          : ${pass_hex}${RESET}"
+
+    echo
+
+    local entropy_alnum entropy_full
+    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
+    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
+
+    echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
+
+    status=$?
+    error_check
+}
+
+audit-system() {
+    local dependencie=lynis
+    dependencie_checker
+
+    sudo lynis audit system
+
+    status=$?
+    error_check
+}
+empty_trash() {
+    local dependencie=shred
+    dependencie_checker
+
+    TRASH_FILES="$HOME/.local/share/Trash/files"
+    TRASH_INFO="$HOME/.local/share/Trash/info"
+
+    local file_count
+    file_count=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+
+    if [[ $file_count -eq 0 ]]; then
+        echo "[i] Trash is already empty."
+        return 0
+    fi
+
+    echo "[i] Found $file_count item(s) in Trash."
+
+    read -rp "Securely delete all trash? (y/n): " confirm
+
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        animation_begin
+
+        # Shred files: 3 passes, zero out on final pass, then remove
+        find "$TRASH_FILES" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+        # Remove leftover empty directories
+        find "$TRASH_FILES" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+
+        # Shred and remove the corresponding .trashinfo metadata files
+        find "$TRASH_INFO" -type f -print0 2>/dev/null \
+            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+        animation_end
+    else
+        echo "Cancelled"
+        status=6
+        error_check
+        return 0
+    fi
+
+    local remaining
+    remaining=$(find "$TRASH_FILES" -mindepth 1 2>/dev/null | wc -l)
+
+    if [[ $remaining -eq 0 ]]; then
+        echo "Succefully emptied"
+    else
+        echo "Some items may remain, check manually"
+        status=1
+        error_check
+        
+        echo "Want to retry?"
+        gum confirm && invisux empty_trash
+        return 0
+    fi
+
+    status=$?
+    error_check
+}
+
+delete-file() {
+    local dependencie=shred
+    dependencie_checker
+
+    echo "Select a file to be removed:  "
+
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    echo "Are you sure to remove $file?"
+    local confirm=$(gum choose yes no)
+
+    case $confirm in
+        no)
+            status=6
+            error_check
+            return 0
+    esac
+
+    animation_begin
+
+    shred -z -n 3 $file
+
+    shred -u $file
+
+    animation_end
+
+    status=$?
+    error_check
+}
+
+remove_metadata() {
+    local dependencie=exiftool
+    dependencie_checker
+
+    echo "Select a file:    "
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    gum confirm "Edit $file?" && exiftool -all= $file
+
+    status=$?
+    error_check
+}
+
+update-apps() {
+    local options=$(gum choose --no-limit APT Snap Pacman DNF Yum Zypper)
+
+    echo "Are you sure?"
+    local confirm=$(gum choose yes no)
+
+    case $confirm in
+        no)
+            status=6
+            error_check
+            return 0
+            ;;
+    esac
+
+    echo "You selected $(echo "$options" | wc -l) package manager(s)"
+    echo ""
+
+    status=0
+
+    while IFS= read -r choice; do
+        echo "Processing selection: $choice"
+
+        case "$choice" in
+            "APT")
+                echo
+                sudo apt update -y && sudo apt upgrade -y
+                ;;
+            "Snap")
+                echo
+                sudo snap refresh
+                ;;
+            "Pacman")
+                echo
+                sudo pacman -Syu --quiet --noconfirm
+                ;;
+            "DNF")
+                echo
+                sudo dnf upgrade --assumeyes
+                ;;
+            "Yum")
+                echo 
+                sudo yum update -y
+                ;;
+            "Zypper")
+                echo
+                sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+                ;;
+        esac
+
+        # Track the worst exit status across all iterations
+        local cmd_status=$?
+        if (( cmd_status > status )); then
+            status=$cmd_status
+        fi
+    done <<< "$options"
+
+    error_check
+}
+
+# Encryption
+encryption_menu() {
+    echo
+    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG "[↩] Return" "➜] Exit")
+    
+    case $gum_encryption_menu in
+        Hash)
+        hash-passwd
+        ;;
+        Explainer)
+            explainer_encryption
+            ;;
+        General-keys)
+            keys
+            ;;
+        AES)
+            aes_menu
+            ;;
+        GPG)
+            gpg_menu
+            ;;
+        "[↩] Return")
+            main_menu
+        ;;
+        "➜] Exit")
+            return 0
+        ;;
+    esac
+}
+hash-passwd() {
+    local dependencie=openssl
+    dependencie_checker
+
+    echo "Choose a password to hash"
+    local hash=$(gum input --placeholder "Password" )
+
+    if [[ -z "$hash" ]]; then
+        echo "No input provided" >&2
+        status=5
+        error_check
+        return 0
+    fi
+
+    echo "Choose a protocol:    "
+    local protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
+
+    case $protocol in
+        MD5)
+        local output=$(openssl passwd -1 $hash)
+        ;;
+        SHA256)
+        local output=$(openssl passwd -5 $hash)
+        ;;
+        SHA512)
+        local output=$(openssl passwd -6 $hash)
+        ;;
+        APR1)
+        local output=$(openssl passwd -apr1 $hash)
+        ;;
+        AIX)
+        local output=$(openssl passwd -aixmd5 $hash)
+        ;;
+    esac
+
+    echo 
+    echo "Your hashed password is: $output"
+    echo "Hashed with: $protocol"
+
+    status=$?
+    error_check
+}
+explainer_encryption() {
+    cat << EOF
+In the modern world encrypting your data and communication is key to ensure a private and secure world. In that set of mind we designed this encryption part of the toolbox. 
+
+Parts included:
+- general-keys
+- AES
+- GPG
+- Hash
+
+Hash :
+Hash a password with an cryptographic hash function.
+
+General Keys :
+General keys is a command to generate a key for cryptographic purposes.
+
+AES:
+AES is a menu to encrypt files / texts with the Advanced Encryption Standard protocol, it features two options for an 256-bit key or an 128-bit key. 256-bit is considered more secure and quantum resistant but 128-bit is faster and reasonably still secure.
+
+GPG:
+GPG is a menu to generate and delete keys, import/export keys, to list, sign and verify keys. It uses the Gnu Privacy Guard implementation of OpenPGP.
+
+Dependencie: openssl
+Dependencie: gpg
+EOF
+}
+
+keys() {
+    local dependencie=openssl
+    dependencie_checker
+
+    local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
+    echo "You selected $key_size as your key size"
+
+    case $key_size in
+        128-bit)
+            key=$(openssl rand -hex 16)
+        ;;
+        192-bit)
+            key=$(openssl rand -hex 24)
+        ;;
+        256-bit)
+            key=$(openssl rand -hex 32)
+        ;;
+        512-bit)
+            key=$(openssl rand -hex 64)
+        ;;
+    esac
+
+    echo "Here is your key: $key"
+    echo "Want to save it to a file?"
+
+    local saving_to_file=$(gum choose yes no)
+
+    case $saving_to_file in
+        yes)
+        read -p "Enter file name:   " file
+        echo -n "$key" >> $file
+        ;;
+        no)
+        return 0
+        ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+aes_menu() {
+    aes_options=$(gum choose Decrypt Encrypt "[↩] Return" "➜] Exit" )
+
+    case $aes_options in
+        Decrypt)
+            aes_decrypt
+            ;;
+        Encrypt)
+            aes_encrypt
+            ;;
+        "[↩] Return")
+            encryption_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+
+aes_decrypt() {
+    aes_decrypt_options=$(gum choose AES-128 AES-256 "[↩] Return" "➜] Exit")
+
+    case $aes_decrypt_options in
+        AES-128)
+            decrypt_128
+            ;;
+        AES-256)
+            decrypt_256
+            ;;
+        "[↩] Return")
+            aes_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+
+aes_encrypt() {
+    aes_encrypt_options=$(gum choose AES-128 AES-256 "[↩] Return" "➜] Exit")
+
+    case $aes_encrypt_options in
+        AES-128)
+            encrypt_128
+            ;;
+        AES-256)
+            encrypt_256
+            ;;
+        "[↩] Return")
+            aes_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+
+}
+
+encrypt_128() {
+    local dependencie=openssl
+    dependencie_checker
+
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        local file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            status=5
+            error_check
+            return 0
+        fi
+        
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
+
+        echo "Encrypted file:   $output_file.aes" 
+
+        echo "Delete original unencrypted file?"
+        local delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        local text=$(gum write)
+
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
+
+        printf "%s" "$text" | openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -a
+        
+        ;;
+        "[↩] Return")
+            aes_encrypt
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+encrypt_256() {
+    local dependencie=openssl
+    dependencie_checker
+
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        local file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            status=5
+            error_check
+            return 0
+        fi
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
+
+        echo "Encrypted file:   $output_file.aes" 
+
+        echo "Delete original unencrypted file?"
+        local delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        local text=$(gum write)
+
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
+
+        printf "%s" "$text" | openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -a
+        ;;
+        "[↩] Return")
+            aes_encrypt
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+decrypt_128() {
+    local dependencie=openssl
+    dependencie_checker
+
+    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            status=5
+            error_check
+            return 0
+        fi
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        openssl enc -aes-128-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.txt"
+
+        echo "Unencrypted file:   $output_file.aes" 
+
+        echo "Delete original encrypted file?"
+        local elete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        local text=$(gum write)
+
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
+
+        printf "%s" "$text" | openssl enc -aes-128-cbc -d -pbkdf2 -iter 100000 -a
+        ;;
+        "[↩] Return")
+            aes_decrypt
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+decrypt_256() {
+    local dependencie=openssl
+    dependencie_checker
+
+    local text_or_file=$(gum choose file text return "[↩] Return" "➜] Exit")
+
+    case $text_or_file in
+        file)
+        echo "Enter file:   "
+        file=$(gum file)
+
+        if [[ "$file" == "no file selected" ]]; then
+            echo "No file was selected"
+            status=5
+            error_check
+            return 0
+        fi
+
+        read -p "Enter file to write to (no extension added):    " output_file
+
+        openssl enc -aes-256-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
+
+        echo "Unencrypted file:   $output_file.aes" 
+
+        echo "Delete original encrypted file?"
+        local delete_choice=$(gum choose yes no)
+        case $delete_choice in
+            yes)
+                shred -u -- "$file"
+            ;;
+            no)
+                return 0
+            ;;
+        esac
+        ;;
+        text)
+        local text=$(gum write)
+
+        if [[ -z "$text" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
+
+        printf "%s" "$text" | openssl enc -aes-256-cbc -d -pbkdf2 -iter 100000 -a
+        ;;
+        "[↩] Return")
+            aes_decrypt
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+gpg_menu() {
+    gpg_options=$(gum choose "Generate a key" "Delete a key" "Import a key" "Export a key" "List keys" "Sign a key" "Verify a key" "[↩] Return" "➜] Exit")
+
+    case $gpg_options in
+        "Generate a key")
+            generate-key
+        ;;
+        "Delete a key")
+            delete-key
+        ;;
+        "Import a key")
+            import-key
+        ;;
+        "Export a key")
+            export-key
+        ;;
+        "List keys")
+            list-keys
+        ;;
+        "Sign a key")
+            sign
+        ;;
+        "Verify a key")
+            verify
+        ;;
+        "[↩] Return")
+            gum_encryption_menu
+        ;;
+        "➜] Exit")
+            return 0
+        ;;
+    esac
+}
+
+generate-key() {
+    local dependencie=gpg
+    dependencie_checker
+
+    gpg --gen-key
+
+    status=$?
+    error_check
+} 
+
+delete-key() {
+    local dependencie=gpg
+    dependencie_checker
+
+    read -p "Username:  " username
+
+    echo "Enter kind of key:    "
+    local answer=$(gum choose public private)
+
+    case $answer in
+        public)
+            gum confirm "Delete key for: $username?" && gpg --delete-key $username 
+        ;;
+        private)
+            gum confirm "Delete key for: $username?" && gpg --delete-secret-key $username
+        ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+import-key() {
+    local dependencie=gpg
+    dependencie_checker
+
+    echo "Select a file:    "
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
+
+    gpg --import $file
+
+    status=$?
+    error_check
+} 
+
+export-key() {
+    local dependencie=gpg
+    dependencie_checker
+
+    read -p "Enter your username:   " username
+    read -p "Enter file to write to (no extension added):    " file
+
+    gpg --export -a $username $file.key
+
+    status=$?
+    error_check
+} 
+
+list-keys() {
+    local dependencie=gpg
+    dependencie_checker
+
+    echo "Public:   "
+    gpg --list-keys
+    echo "Secret:   "
+    gpg --list-secret-keys
+
+    status=$?
+    error_check
+} 
+
+sign() {
+    local dependencie=gpg
+    dependencie_checker
+
+    echo "Select a file:    "
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
+
+    gpg --sign $file
+
+    status=$?
+    error_check
+}
+
+verify() {
+    local dependencie=gpg
+    dependencie_checker
+
+    echo "Select a file:    "
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
+
+	gpg --verify $file
+
+    status=$?
+    error_check
+}
+
+help () {
+    if [[ -z "$1" ]]; then
+        _invisux_main_command
+        return 0
+    fi
+
+    case "$1" in
+        *)
+            echo -e "${RED}[!] No help entry for '$1'.${RESET}"
+            return 0
+            ;;
+    esac
+}
+
+info() {
+    echo -e "${BOLD}${PURPLE}"
+
+    cat << 'EOF' # Banner
+IIIII NN   NN VV     VV IIIII  SSSSS  UU   UU XX    XX 
+ III  NNN  NN VV     VV  III  SS      UU   UU  XX  XX  
+ III  NN N NN  VV   VV   III   SSSSS  UU   UU   XXXX   
+ III  NN  NNN   VV VV    III       SS UU   UU  XX  XX  
+IIIII NN   NN    VVV    IIIII  SSSSS   UUUUU  XX    XX 
+EOF
+    
+    echo -e "${RESET}                Linux Privacy Toolkit"
+    echo "                 Created by: JasperC" 
+    echo
+
+    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/version
+
+    status=$?
+    error_check
+}
+
+license_menu() {
+    echo
+    gum_license_menu=$(gum choose "Full license" "TL;DR" "License name" "[↩] Return" "➜] Exit")
+
+    case $gum_license_menu in
+        "Full license")
+            full-license
+            ;;
+        "TL;DR")
+            license_overview
+            ;;
+        "License name")
+            name-of-license
+            ;;
+        "[↩] Return")
+            main_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+full-license() {
+    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
+
+    status=$?
+    error_check
+}
+license_overview() {
+    cat << EOF
+Licensed under GPL-3.0 
+You are free to use, copy, modify, and distribute this software for any purpose. With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact. You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
+EOF
+}
+name-of-license() {
+    echo "License: GNU General Public License v3"
+}
+
+# Error handling
+error_check() {
+    echo
+    echo "Error status: "
+
+    case $status in
+        0)
+            echo -e "${GREEN}[✔] Succes / no error${RESET}"
+        ;;
+        1)
+            echo -e "${RED}[!] General/catchall error${RESET}"
+        ;;
+        2)
+            echo -e "${RED}[!] Misuse of shell builtin${RESET}"
+        ;;
+        3)
+            echo -e "${RED}[!] Invalid input${RESET}"
+            ;;
+        4)
+            echo -e "${RED}[!] Input does not meet the requirements of the input${RESET}"
+            ;;
+        5)
+            echo -e "${RED}[!] Empty input${RESET}"
+            ;;
+        6)
+            echo -e "[↩] Action aborted${RESET}"
+            ;;
+        126)
+            echo -e "${RED}[!] Command found but not executable${RESET}"
+            ;;
+        127)
+            echo -e "${RED}[!] Command not found${RESET}"
+            ;;
+        128)
+            echo -e "${RED}[!] Invalid argument to exit${RESET}"
+            ;;
+        128+N)
+            echo -e "${RED}[!] Terminated by signal N${RESET}"
+            ;;
+        255)
+            echo -e "${RED}[!] Exit status out of range / uncaught error${RESET}"
+            ;;
+        *)
+            echo -e "${RED}[!] Unhandled exit status: $status${RESET}" >&2
+        ;;
+    esac
+}
+# Alliases
+license() {
+    full-license
+}
+key() {
+    generate-key
+}
+password() {
+    generate-passwd
+}
+trash() {
+    emoty_trash
+}
+apps() {
+    update_apps
+}
+hide() {
+    hide_files
+}
+data() {
+    random_data
+}
+# Command dispatcher
+_INVISUX_COMMANDS=(
+    license
+    help
+    info
+    verify
+    sign
+    list-keys
+    export-keys
+    decrypt_256
+    decrypt_128
+    encrypt_256
+    encrypt_128
+    privacy_menu
+    security_menu
+    encryption_menu
+    license_menu
+    generate-passwd
+    aes_encrypt
+    aes_decrypt
+    keys
+    update-apps
+    empty_trash
+    delete-file
+    explainer_encryption
+    generate-key
+    remove_metadata
+    audit-system
+    dns_res
+    dns_conf
+    rand_mac
+    check_ip
+    check_tor
+    hide_files
+    hide_dot
+    concatenation
+    steganography
+    random_data
+)
+# Main command
+_invisux_main_command() {
+    main_menu
+}
+main_menu() {
+    gum_main_option=$(gum choose Privacy Security Encryption Info License "➜] Exit")
+    
+    case $gum_main_option in
+        Privacy)
+            privacy_menu
+            ;;
+        Security)
+            security_menu
+            ;;
+        Encryption)
+            encryption_menu
+            ;;
+        Info)
+            info
+            ;;
+        License)
+            license_menu
+            ;;
+        "➜] Exit")
+            return 0
+            ;;
+    esac
+}
+
+# Command handler
+    if [[ $# -eq 0 ]]; then
+        _invisux_main_command
+    elif [[ "$1" == "help" ]]; then
+        help "$2"
+    elif [[ " ${_INVISUX_COMMANDS[*]} " == *" $1 "* ]]; then
+        "$1"
+    else
+        echo -e "${RED}[!] Unknown command: $1${RESET}"   
+        return 0
+    fi
+
+# Creators note: if you are reading this, thank you for checking out my script! Love you all <3
+# If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
+# You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
+# Also you can contact me trough matrix: @whiteghost404:matrix.org
+
+# Thanks to all contributors and the creators of used dependencies.
+# Copyright (C) 2026 JasperC
