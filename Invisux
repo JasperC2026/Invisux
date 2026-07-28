@@ -180,6 +180,13 @@ steganography() {
             echo "Enter password to encrypt with:   "
             local password=$(gum input --placeholder "Password")
 
+            if [[ -z "$password" ]]; then
+                echo "No input provided" >&2
+                status=5
+                error_check
+                return 0
+            fi
+
             echo "Want to save it to a file?"
 
             local saving_to_file=$(gum choose yes no)
@@ -212,6 +219,13 @@ steganography() {
             echo "Enter password to decrypt with:   "
             local password=$(gum input --placeholder "Password")
 
+            if [[ -z "$password" ]]; then
+                echo "No input provided" >&2
+                status=5
+                error_check
+                return 0
+            fi
+
             steghide extract -sf $file "password"
             
             error_check
@@ -233,6 +247,13 @@ random_data() {
         "String")
         echo "Select size:  "
         local numbers=$(gum input --placeholder "Total numbers of characters")
+
+        if [[ -z "$numbers" ]]; then
+            echo "No input provided" >&2
+            status=5
+            error_check
+            return 0
+        fi
 
         local dependencie=openssl
         dependencie_checker
@@ -370,6 +391,13 @@ generate-passwd() {
 
     local length=$(gum input --placeholder "Password length")
     local length=${length:-16}
+
+    if [[ -z "$lenght" ]]; then
+        echo "No input provided" >&2
+        status=5
+        error_check
+        return 0
+    fi
 
     if [[ ! "$length" =~ ^[0-9]+$ ]]; then
         echo "Invalid input for lenght"
@@ -634,6 +662,13 @@ hash-passwd() {
 
     echo "Choose a password to hash"
     local hash=$(gum input --placeholder "Password" )
+
+    if [[ -z "$hash" ]]; then
+        echo "No input provided" >&2
+        status=5
+        error_check
+        return 0
+    fi
 
     echo "Choose a protocol:    "
     local protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
