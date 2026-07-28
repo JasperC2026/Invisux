@@ -1251,6 +1251,12 @@ trash() {
 apps() {
     update_apps
 }
+hide() {
+    hide_files
+}
+data() {
+    random_data
+}
 # Command dispatcher
 _INVISUX_COMMANDS=(
     license
@@ -1284,8 +1290,12 @@ _INVISUX_COMMANDS=(
     rand_mac
     check_ip
     check_tor
+    hide_files
+    hide_dot
+    oncatenation
+    steganography
+    random_data
 )
-
 # Main command
 _invisux_main_command() {
     main_menu
