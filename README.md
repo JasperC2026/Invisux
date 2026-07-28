@@ -34,6 +34,7 @@ openssl **OPTIONAL**
 shred **OPTIONAL**
 exiftool **OPTIONAL**
 gpg **OPTIONAL**
+steghide **OPTIONAL**
 
 
 ## Contributing

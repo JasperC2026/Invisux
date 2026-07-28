@@ -67,9 +67,12 @@ RESET="\e[0m"
 # Privacy
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
+    gum_privacy_menu=$(gum choose "Hide file(s)" "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
+        "Hide file(s)")
+        hide_files
+        ;;
         "Random data")
             random_data
         ;;
@@ -87,7 +90,93 @@ privacy_menu() {
         ;;
     esac
 }
+hide_files() {
+    hide_menu=$(gum choose "Hide in filesystem (low security)" "Concatenation in file (mid security)" "Steganography (very secure)")
+    
+    case $hide_menu in
+        "Hide in filesystem (low security)")
+        hide_dot
+        ;;
+        "Concatenation in file (mid security)")
+        concatenation
+        ;;
+        "Steganography (very secure)")
+        steganography
+        ;;
+    esac
+}
+hide_dot() {
+    echo "Enter file or folder to hide"
+    local file=$(gum input --placeholder "Filename")
 
+    mv $file .$file
+
+    error_check
+}
+oncatenation() {
+    local dependencie=zip
+    dependencie_checker
+
+    echo "Enter file to hide"
+    local file=$(gum file)
+
+    zip=$(zip $file)
+
+    echo "Enter JPG image to hide the file in"
+    local jpg=$(gum file)
+
+    cat $jpg $zip > $jpg
+
+    error_check
+}
+steganography() {
+    steg_menu=$(gum choose Embed Extract)
+    case $steg_menu in
+        Embed)
+            local dependencie=steghide
+            dependencie_checker
+
+            echo "Enter file to hide"
+            local file=$(gum file)
+
+            echo "Enter JPG image to hide the file in"
+            local jpg=$(gum file)
+
+            echo "Enter password to encrypt with:   "
+            local password=$(gum input --placeholder "Password")
+
+            echo "Want to save it to a file?"
+
+            local saving_to_file=$(gum choose yes no)
+
+            case $saving_to_file in
+                yes)
+                read -p "Enter file name:   " file
+                echo -n "$password" >> $file
+                ;;
+            esac
+
+            steghide embed -cf $jpg -ef $file "$password"
+
+            error_check
+        ;;
+        Extract)
+            local dependencie=steghide
+            dependencie_checker
+
+            echo "Enter file it is hidden in:   "
+            local file=$(gum file)
+
+            echo "Enter password to decrypt with:   "
+            local password=$(gum input --placeholder "Password")
+
+            steghide extract -sf $file "password"
+            
+            error_check
+        ;;
+    esac
+
+}
 random_data() {
     data_menu=$(gum choose "Random name" "String" "Random username")
 
