@@ -106,8 +106,15 @@ hide_files() {
     esac
 }
 hide_dot() {
-    echo "Enter file or folder to hide"
-    local file=$(gum input --placeholder "Filename")
+    echo "Enter file to hide"
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
 
     mv $file .$file
 
@@ -120,10 +127,24 @@ concatenation() {
     echo "Enter file to hide"
     local file=$(gum file)
 
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
     zip=$(zip $file)
 
     echo "Enter JPG image to hide the file in"
     local jpg=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
 
     cat $jpg $zip > $jpg
 
@@ -139,8 +160,22 @@ steganography() {
             echo "Enter file to hide"
             local file=$(gum file)
 
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
+
             echo "Enter JPG image to hide the file in"
             local jpg=$(gum file)
+
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
 
             echo "Enter password to encrypt with:   "
             local password=$(gum input --placeholder "Password")
@@ -166,6 +201,13 @@ steganography() {
 
             echo "Enter file it is hidden in:   "
             local file=$(gum file)
+
+            if [[ "$file" == "no file selected" ]]; then
+                echo "No file was selected"
+                status=5
+                error_check
+                return 0
+            fi
 
             echo "Enter password to decrypt with:   "
             local password=$(gum input --placeholder "Password")
@@ -1057,6 +1099,13 @@ import-key() {
     echo "Select a file:    "
     local file=$(gum file)
 
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
+
     gpg --import $file
 
     status=$?
@@ -1096,6 +1145,13 @@ sign() {
     echo "Select a file:    "
     local file=$(gum file)
 
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
+
     gpg --sign $file
 
     status=$?
@@ -1108,6 +1164,13 @@ verify() {
 
     echo "Select a file:    "
     local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        eturn 0
+    fi
 
 	gpg --verify $file
 
