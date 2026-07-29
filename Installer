@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Invisux
+# Copyright (C) 2026  JasperC
+# This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+echo "Invisux  Copyright (C) 2026  JasperC"
+echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
+
 echo "Choose an option: "
 choice=$(gum choose "See version" "See license" "Install" "Update")
 
@@ -16,12 +24,10 @@ case $choice in
         Stable)
         dir=$(pwd)
         curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Versions/invisux-v1.0
-        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/invisux_loading.sh
 
         chmod +x $dir/invisux-v1.0
-        chmod +x $dir/invisux-loading.sh
 
-        cp $dir/invisux-v1.0 /usr/local/bin/invisux
+        cp $dir/Invisux /usr/local/bin/Invisux-v1.0
 
         echo "All set"
         ;;
@@ -31,14 +37,11 @@ case $choice in
         Source)
         dir=$(pwd)
         curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Invisux
-        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/invisux_loading.sh
 
         chmod +x $dir/Invisux
-        chmod +x $dir/invisux-loading.sh
 
         cp $dir/Invisux /usr/local/bin/Invisux
-        cp $dir/invisux_loading.sh /usr/local/bin/invisux_loading.sh
-        
+
         echo "All set"
         ;;
     esac
