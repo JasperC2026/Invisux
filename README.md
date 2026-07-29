@@ -24,11 +24,10 @@ Features: password generation, system auditing, emptying trash, deleting file (s
 Features: networking options including mac adress randomization, checking tor/public ip, checking ports, dns options. Removing meta data from files.
 
 ## Dependencies
-The tool needs gum to operate and the loading animation (see installer). The rest of dependencies are optional and are handled by the tool. 
+The tool needs gum to operate. The rest of dependencies are optional and are handled by the tool. 
 
 List:
 gum **REQUIRED**
-invisux_loading.sh **REQUIRED**
 faker **OPTIONAL**
 openssl **OPTIONAL**
 shred **OPTIONAL**
@@ -38,6 +37,9 @@ steghide **OPTIONAL**
 
 ## All commands
 coming soon
+
+## Thanks
+Thanks to https://github.com/Silejonu/bash_loading_animations for the loading animation used. Also thanks to all the creators of the dependencies.
 
 ## Contributing
 Contributions are welcome, message me or open a PR to start.
