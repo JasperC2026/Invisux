@@ -587,7 +587,7 @@ remove_metadata() {
 }
 
 update-apps() {
-    local options=$(gum choose --no-limit APT Snap Pacman DNF Yum Zypper)
+    local options=$(gum choose --no-limit APT Flatpak Snap Pacman DNF Yum Zypper)
 
     echo "Are you sure?"
     local confirm=$(gum choose yes no)
@@ -609,6 +609,10 @@ update-apps() {
         echo "Processing selection: $choice"
 
         case "$choice" in
+            "Flatpak")
+                echo
+                sudo flatpak update
+            ;;
             "APT")
                 echo
                 sudo apt update -y && sudo apt upgrade -y
