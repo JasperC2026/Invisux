@@ -8,44 +8,14 @@
 echo "Invisux  Copyright (C) 2026  JasperC"
 echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
 
-echo "Choose an option: "
-choice=$(gum choose "See version" "See license" "Install" "Update")
+cd ~/
 
-case $choice in
-    See version)
-    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/version
-    ;;
-    See license)
-    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
-    ;;
-    Install)
-    install=$(gum choose "Stable" "Newest beta" "Source")
-    case $install in
-        Stable)
-        dir=$(pwd)
-        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Versions/invisux-v1.0
+curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Versions/invisux-v1.0
 
-        chmod +x $dir/invisux-v1.0
+chmod +x ~/invisux-v1.0
 
-        cp $dir/Invisux /usr/local/bin/Invisux-v1.0
+cp ~/Invisux-v1.0 /usr/local/bin/Invisux
 
-        echo "All set"
-        ;;
-        Newest beta)
-        echo "None yet"
-        ;;
-        Source)
-        dir=$(pwd)
-        curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Invisux
+sudo apt install gum
 
-        chmod +x $dir/Invisux
-
-        cp $dir/Invisux /usr/local/bin/Invisux
-
-        echo "All set"
-        ;;
-    esac
-    ;;
-    Update)
-    ;;
-esac
+echo "All set"
