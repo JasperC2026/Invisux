@@ -28,6 +28,12 @@ Built with simplicity and lightweightness in mind, Invisux consolidates common p
 
 Install the tool using the installer, or build your preferred version from source.
 
+``` bash
+curl -L -o Installer.sh https://codeberg.org/JasperC/Invisux/raw/branch/main/Installer.sh
+chmod +x Installer.sh
+./Installer.sh
+```
+
 ---
 
 ## Features

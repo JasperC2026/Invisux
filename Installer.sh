@@ -10,7 +10,7 @@ echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and
 
 cd ~/
 
-curl -O https://codeberg.org/JasperC/Invisux/src/branch/main/Versions/invisux-v1.0
+curl -L -o invisux-v1.0 https://codeberg.org/JasperC/Invisux/raw/branch/main/Versions/invisux-v1.0
 
 chmod +x ~/invisux-v1.0
 
