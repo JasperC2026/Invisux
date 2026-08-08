@@ -93,7 +93,7 @@ RESET="\e[0m"
 # Privacy
 privacy_menu() {
     echo
-    gum_privacy_menu=$(gum choose "Hide file(s)" "Random data" "Network" "Remove metadata" "[↩] Return" "➜] Exit")
+    gum_privacy_menu=$(gum choose "Hide file(s)" "Random data" "Network" "View metadata" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
         "Hide file(s)")
@@ -104,6 +104,9 @@ privacy_menu() {
         ;;
         "Network")
             network_menu
+        ;;
+        "View metadata")
+            view_metadata
         ;;
         "Remove metadata")
             remove_metadata
@@ -381,6 +384,26 @@ check_tor() {
 check_ip() {
     ip=$(curl ifconfig.me)
     echo "Your IP is: $ip"
+}
+
+view_metadata() {
+    local dependencie=exiftool
+    dependencie_checker
+
+    echo "Select a file:    "
+    local file=$(gum file)
+
+    if [[ "$file" == "no file selected" ]]; then
+        echo "No file was selected"
+        status=5
+        error_check
+        return 0
+    fi
+
+    exiftool $file
+
+    status=$?
+    error_check
 }
 # Security
 security_menu() {
@@ -1457,6 +1480,7 @@ _INVISUX_COMMANDS=(
     random_data
     wipe-drive
     found_easter_egg
+    view_metadata
 )
 # Main command
 _invisux_main_command() {
