@@ -75,6 +75,7 @@ status_negative="${RED}[!]${RESET}"
 status_positive="${GREEN}[✔]${RESET}"
 forward="${GREEN}[➜]${RESET}" 
 arrow="➜"
+easter_egg="aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1FNFdsVVhySmd5NAo="
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
@@ -340,6 +341,9 @@ dns_res() {
     status=$?
     error_check
 }
+
+URL=$(echo "$easter_egg" | base64 -d)
+
 dns_conf() {
     echo "DNS nameserver:   "
     cat /etc/resolv.conf | grep nameserver
@@ -1125,6 +1129,10 @@ decrypt_256() {
     error_check
 }
 
+found_easter_egg() {
+    mpv "$URL" 
+}
+
 gpg_menu() {
     gpg_options=$(gum choose "Generate a key" "Delete a key" "Import a key" "Export a key" "List keys" "Sign a key" "Verify a key" "[↩] Return" "➜] Exit")
 
@@ -1276,6 +1284,8 @@ verify() {
     status=$?
     error_check
 }
+
+# Psst, want an easter egg? Run this: invisux found_easter_egg
 
 info() {
     echo -e "${BOLD}${PURPLE}"
@@ -1446,6 +1456,7 @@ _INVISUX_COMMANDS=(
     steganography
     random_data
     wipe-drive
+    found_easter_egg
 )
 # Main command
 _invisux_main_command() {
