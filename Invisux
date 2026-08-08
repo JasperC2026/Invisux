@@ -381,7 +381,7 @@ check_ip() {
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Update apps" "[↩] Return" "➜] Exit")
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Wipe a drive" "Update apps" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
         "Generate a password")
@@ -396,6 +396,9 @@ security_menu() {
         "Delete a file")
             delete-file
             ;;
+        "Wipe a drive")
+            wipe-drive
+            ;;
         "Update apps")
             update-apps
             ;;
@@ -407,7 +410,46 @@ security_menu() {
         ;;
     esac
 }
+wipe-drive() {
+    echo "This command will compeltely wipe a selected drive securely, the data will become unrecoverable."
+    echo "Sure you wanna continue?"
+    gum confirm && wipe-continue
+}
+wipe-continue() {
+    echo "All USB drives:   "
+    local drives=$(lsblk | grep sda)
 
+    if [[ -z "$drives" ]]; then
+        echo "No USB drives are in your system" >&2
+        status=7
+        error_check
+        return 0
+    fi
+
+    echo "Select a drive"
+    local drive=$(gum input --placeholder "Drive")
+
+    if [[ -z "$drive" ]]; then
+        echo "No input provided" >&2
+        status=5
+        error_check
+        return 0
+    fi
+
+    local selected=$(echo "$drive" | grep sda)
+
+    if [[ -z "$selected" ]]; then
+        echo "Selected drive is NOT an USB" >&2
+        status=4
+        error_check
+        return 0
+    fi
+
+    shred -v $drive
+
+    status=$?
+    error_check
+}
 generate-passwd() {
     local dependencie=openssl
     dependencie_checker
@@ -1321,6 +1363,9 @@ error_check() {
         6)
             echo -e "[↩] Action aborted${RESET}"
             ;;
+        7)
+            echo -e "${RED} Action failed, missing required part(s)${RESET}"
+            ;;
         126)
             echo -e "${RED}[!] Command found but not executable${RESET}"
             ;;
@@ -1400,6 +1445,7 @@ _INVISUX_COMMANDS=(
     concatenation
     steganography
     random_data
+    wipe-drive
 )
 # Main command
 _invisux_main_command() {
