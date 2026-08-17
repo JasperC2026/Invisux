@@ -1613,7 +1613,7 @@ main_menu() {
 # Command handler
 if [[ $# -eq 0 ]]; then
     invisux_main_command
-elif [[ $1 == "license "]]; then
+elif [[ $1 == "license" ]]; then
     if [[ -z $2 ]]; then
         full-license
     elif [[ $2 == "-m" ]]; then
@@ -1776,6 +1776,7 @@ elif [[ $1 == "wipe-drive" ]]; then
 Ussage:
 invisux wipe-drive / invisux wipe-drive--c 
 EOF
+    fi
 elif [[ $1 == "check-ports" ]]; then
     check_ports
 elif [[ $1 == "dns-res" ]]; then
