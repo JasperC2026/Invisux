@@ -382,8 +382,10 @@ check_tor() {
     echo "Open check.torproject.org in your browser to check if tor is used"
 }
 check_ip() {
-    ip=$(curl ifconfig.me)
-    echo "Your IP is: $ip"
+    local dependencie=dig
+    dependencie_checker
+
+    dig +short myip.opendns.com @resolver1.opendns.com
 }
 
 view_metadata() {
