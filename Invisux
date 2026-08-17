@@ -1481,11 +1481,9 @@ if [[ $# -eq 0]]; then
     invisux_main_command
 fi 
 
-# Commands havo to be made just the handler for now
+# Commands have to be made just the handler for now
 
 if [ "$1" == "license" ]; then
-    if [ "$2" == "-s" ]; then
-        license_silent
     elif [ "$2" == "-i" ]; then
         license_interactive
     elif [ -z "$2" ]; then
@@ -1494,18 +1492,8 @@ if [ "$1" == "license" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "info" ]; then
-    if [ "$2" == "-s" ]; then
-        info_silent
-    elif [ "$2" == "-i" ]; then
-        info_interactive
-    elif [ -z "$2" ]; then
-        info_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    info
 elif [ "$1" == "verify" ]; then
-    if [ "$2" == "-s" ]; then
-        verify_silent
     elif [ "$2" == "-i" ]; then
         verify_interactive
     elif [ -z "$2" ]; then
@@ -1514,8 +1502,6 @@ elif [ "$1" == "verify" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "sign" ]; then
-    if [ "$2" == "-s" ]; then
-        sign_silent
     elif [ "$2" == "-i" ]; then
         sign_interactive
     elif [ -z "$2" ]; then
@@ -1524,8 +1510,6 @@ elif [ "$1" == "sign" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "list-keys" ]; then
-    if [ "$2" == "-s" ]; then
-        list_keys_silent
     elif [ "$2" == "-i" ]; then
         list_keys_interactive
     elif [ -z "$2" ]; then
@@ -1534,8 +1518,6 @@ elif [ "$1" == "list-keys" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "export-keys" ]; then
-    if [ "$2" == "-s" ]; then
-        export_keys_silent
     elif [ "$2" == "-i" ]; then
         export_keys_interactive
     elif [ -z "$2" ]; then
@@ -1544,8 +1526,6 @@ elif [ "$1" == "export-keys" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "decrypt_256" ]; then
-    if [ "$2" == "-s" ]; then
-        decrypt_256_silent
     elif [ "$2" == "-i" ]; then
         decrypt_256_interactive
     elif [ -z "$2" ]; then
@@ -1554,8 +1534,6 @@ elif [ "$1" == "decrypt_256" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "decrypt_128" ]; then
-    if [ "$2" == "-s" ]; then
-        decrypt_128_silent
     elif [ "$2" == "-i" ]; then
         decrypt_128_interactive
     elif [ -z "$2" ]; then
@@ -1564,8 +1542,6 @@ elif [ "$1" == "decrypt_128" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "encrypt_256" ]; then
-    if [ "$2" == "-s" ]; then
-        encrypt_256_silent
     elif [ "$2" == "-i" ]; then
         encrypt_256_interactive
     elif [ -z "$2" ]; then
@@ -1574,8 +1550,6 @@ elif [ "$1" == "encrypt_256" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "encrypt_128" ]; then
-    if [ "$2" == "-s" ]; then
-        encrypt_128_silent
     elif [ "$2" == "-i" ]; then
         encrypt_128_interactive
     elif [ -z "$2" ]; then
@@ -1583,49 +1557,7 @@ elif [ "$1" == "encrypt_128" ]; then
     else
         echo "Unknown option: $2"
     fi
-elif [ "$1" == "privacy_menu" ]; then
-    if [ "$2" == "-s" ]; then
-        privacy_menu_silent
-    elif [ "$2" == "-i" ]; then
-        privacy_menu_interactive
-    elif [ -z "$2" ]; then
-        privacy_menu_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "security_menu" ]; then
-    if [ "$2" == "-s" ]; then
-        security_menu_silent
-    elif [ "$2" == "-i" ]; then
-        security_menu_interactive
-    elif [ -z "$2" ]; then
-        security_menu_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "encryption_menu" ]; then
-    if [ "$2" == "-s" ]; then
-        encryption_menu_silent
-    elif [ "$2" == "-i" ]; then
-        encryption_menu_interactive
-    elif [ -z "$2" ]; then
-        encryption_menu_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "license_menu" ]; then
-    if [ "$2" == "-s" ]; then
-        license_menu_silent
-    elif [ "$2" == "-i" ]; then
-        license_menu_interactive
-    elif [ -z "$2" ]; then
-        license_menu_normal
-    else
-        echo "Unknown option: $2"
-    fi
 elif [ "$1" == "generate-passwd" ]; then
-    if [ "$2" == "-s" ]; then
-        generate_passwd_silent
     elif [ "$2" == "-i" ]; then
         generate_passwd_interactive
     elif [ -z "$2" ]; then
@@ -1633,53 +1565,13 @@ elif [ "$1" == "generate-passwd" ]; then
     else
         echo "Unknown option: $2"
     fi
-elif [ "$1" == "aes_encrypt" ]; then
-    if [ "$2" == "-s" ]; then
-        aes_encrypt_silent
-    elif [ "$2" == "-i" ]; then
-        aes_encrypt_interactive
-    elif [ -z "$2" ]; then
-        aes_encrypt_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "aes_decrypt" ]; then
-    if [ "$2" == "-s" ]; then
-        aes_decrypt_silent
-    elif [ "$2" == "-i" ]; then
-        aes_decrypt_interactive
-    elif [ -z "$2" ]; then
-        aes_decrypt_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "keys" ]; then
-    if [ "$2" == "-s" ]; then
-        keys_silent
-    elif [ "$2" == "-i" ]; then
-        keys_interactive
-    elif [ -z "$2" ]; then
-        keys_normal
-    else
-        echo "Unknown option: $2"
-    fi
 elif [ "$1" == "update-apps" ]; then
-    if [ "$2" == "-s" ]; then
-        update_apps_silent
-    elif [ "$2" == "-i" ]; then
-        update_apps_interactive
-    elif [ -z "$2" ]; then
-        update_apps_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    update_apps
 elif [ "$1" == "empty_trash" ]; then
     if [ "$2" == "-s" ]; then
         empty_trash_silent
-    elif [ "$2" == "-i" ]; then
-        empty_trash_interactive
     elif [ -z "$2" ]; then
-        empty_trash_normal
+        empty_trash
     else
         echo "Unknown option: $2"
     fi
@@ -1690,16 +1582,6 @@ elif [ "$1" == "delete-file" ]; then
         delete_file_interactive
     elif [ -z "$2" ]; then
         delete_file_normal
-    else
-        echo "Unknown option: $2"
-    fi
-elif [ "$1" == "explainer_encryption" ]; then
-    if [ "$2" == "-s" ]; then
-        explainer_encryption_silent
-    elif [ "$2" == "-i" ]; then
-        explainer_encryption_interactive
-    elif [ -z "$2" ]; then
-        explainer_encryption_normal
     else
         echo "Unknown option: $2"
     fi
@@ -1724,65 +1606,23 @@ elif [ "$1" == "remove_metadata" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "audit-system" ]; then
-    if [ "$2" == "-s" ]; then
-        audit_system_silent
-    elif [ "$2" == "-i" ]; then
-        audit_system_interactive
-    elif [ -z "$2" ]; then
-        audit_system_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    audit_system
 elif [ "$1" == "dns_res" ]; then
-    if [ "$2" == "-s" ]; then
-        dns_res_silent
-    elif [ "$2" == "-i" ]; then
-        dns_res_interactive
-    elif [ -z "$2" ]; then
-        dns_res_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    dns_res
 elif [ "$1" == "dns_conf" ]; then
-    if [ "$2" == "-s" ]; then
-        dns_conf_silent
-    elif [ "$2" == "-i" ]; then
-        dns_conf_interactive
-    elif [ -z "$2" ]; then
-        dns_conf_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    dns_conf
 elif [ "$1" == "rand_mac" ]; then
     if [ "$2" == "-s" ]; then
         rand_mac_silent
-    elif [ "$2" == "-i" ]; then
-        rand_mac_interactive
     elif [ -z "$2" ]; then
         rand_mac_normal
     else
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "check_ip" ]; then
-    if [ "$2" == "-s" ]; then
-        check_ip_silent
-    elif [ "$2" == "-i" ]; then
-        check_ip_interactive
-    elif [ -z "$2" ]; then
-        check_ip_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    check_ip
 elif [ "$1" == "check_tor" ]; then
-    if [ "$2" == "-s" ]; then
-        check_tor_silent
-    elif [ "$2" == "-i" ]; then
-        check_tor_interactive
-    elif [ -z "$2" ]; then
-        check_tor_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    check_tor_normal
 elif [ "$1" == "hide_files" ]; then
     if [ "$2" == "-s" ]; then
         hide_files_silent
@@ -1823,16 +1663,6 @@ elif [ "$1" == "steganography" ]; then
     else
         echo "Unknown option: $2"
     fi
-elif [ "$1" == "random_data" ]; then
-    if [ "$2" == "-s" ]; then
-        random_data_silent
-    elif [ "$2" == "-i" ]; then
-        random_data_interactive
-    elif [ -z "$2" ]; then
-        random_data_normal
-    else
-        echo "Unknown option: $2"
-    fi
 elif [ "$1" == "wipe-drive" ]; then
     if [ "$2" == "-s" ]; then
         wipe_drive_silent
@@ -1844,25 +1674,9 @@ elif [ "$1" == "wipe-drive" ]; then
         echo "Unknown option: $2"
     fi
 elif [ "$1" == "found_easter_egg" ]; then
-    if [ "$2" == "-s" ]; then
-        found_easter_egg_silent
-    elif [ "$2" == "-i" ]; then
-        found_easter_egg_interactive
-    elif [ -z "$2" ]; then
-        found_easter_egg_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    found_easter_egg
 elif [ "$1" == "view_metadata" ]; then
-    if [ "$2" == "-s" ]; then
-        view_metadata_silent
-    elif [ "$2" == "-i" ]; then
-        view_metadata_interactive
-    elif [ -z "$2" ]; then
-        view_metadata_normal
-    else
-        echo "Unknown option: $2"
-    fi
+    view_metadata
 else
     echo "Unknown command: $1"
 fi
