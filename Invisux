@@ -1329,10 +1329,7 @@ EOF
     echo "                 Created by: JasperC" 
     echo
 
-    curl https://codeberg.org/JasperC/Invisux/raw/branch/main/version
-
-    status=$?
-    error_check
+    echo "Version: Alpha stage for 1.1"
 }
 
 license_menu() {
