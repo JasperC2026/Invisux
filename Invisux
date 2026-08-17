@@ -141,7 +141,6 @@ hide_dot() {
     local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         return 0
@@ -159,7 +158,6 @@ concatenation() {
     local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         return 0
@@ -171,7 +169,6 @@ concatenation() {
     local jpg=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         return 0
@@ -192,7 +189,6 @@ steganography() {
             local file=$(gum file)
 
             if [[ "$file" == "no file selected" ]]; then
-                echo "No file was selected"
                 status=5
                 error_check
                 return 0
@@ -202,7 +198,6 @@ steganography() {
             local jpg=$(gum file)
 
             if [[ "$file" == "no file selected" ]]; then
-                echo "No file was selected"
                 status=5
                 error_check
                 return 0
@@ -212,7 +207,6 @@ steganography() {
             local password=$(gum input --placeholder "Password")
 
             if [[ -z "$password" ]]; then
-                echo "No input provided" >&2
                 status=5
                 error_check
                 return 0
@@ -241,7 +235,6 @@ steganography() {
             local file=$(gum file)
 
             if [[ "$file" == "no file selected" ]]; then
-                echo "No file was selected"
                 status=5
                 error_check
                 return 0
@@ -251,7 +244,6 @@ steganography() {
             local password=$(gum input --placeholder "Password")
 
             if [[ -z "$password" ]]; then
-                echo "No input provided" >&2
                 status=5
                 error_check
                 return 0
@@ -280,7 +272,6 @@ random_data() {
         local numbers=$(gum input --placeholder "Total numbers of characters")
 
         if [[ -z "$numbers" ]]; then
-            echo "No input provided" >&2
             status=5
             error_check
             return 0
@@ -409,6 +400,7 @@ view_metadata() {
     status=$?
     error_check
 }
+
 # Security
 security_menu() {
     echo
@@ -441,11 +433,13 @@ security_menu() {
         ;;
     esac
 }
+
 wipe-drive() {
     echo "This command will compeltely wipe a selected drive securely, the data will become unrecoverable."
     echo "Sure you wanna continue?"
     gum confirm && wipe-continue
 }
+
 wipe-continue() {
     echo "All USB drives:   "
     local drives=$(lsblk | grep sda)
@@ -461,7 +455,6 @@ wipe-continue() {
     local drive=$(gum input --placeholder "Drive")
 
     if [[ -z "$drive" ]]; then
-        echo "No input provided" >&2
         status=5
         error_check
         return 0
@@ -481,6 +474,36 @@ wipe-continue() {
     status=$?
     error_check
 }
+
+wipe-drive--c() {
+    drive=$3
+
+    local drives=$(lsblk | grep sda)
+
+    if [[ -z "$drives" ]]; then
+        status=7
+        error_check
+        return 0
+    fi
+
+    if [[ -z "$3" ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    local selected=$(echo "$3" | grep sda)
+
+    if [[ -z "$selected" ]]; then
+        return 0
+    fi
+
+    shred -v $drive
+
+    status=$?
+    error_check
+}
+
 generate-passwd() {
     local dependencie=openssl
     dependencie_checker
@@ -533,6 +556,52 @@ generate-passwd() {
     error_check
 }
 
+generate-passwd--c() {
+    local dependencie=openssl
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    local length=$(gum input --placeholder "Password length")
+    local length=${length:-16}
+
+    if [[ ! "$length" =~ ^[0-9]+$ ]]; then
+        return 0
+    fi
+
+    if [ ! "$length" -ge 7 ] && [ "$length" -le 129 ]; then
+        return 0
+    fi
+
+    local pass_alnum
+    pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
+    
+    echo -e "  Alphanumeric : ${pass_alnum}${RESET}"
+
+    local pass_full
+    pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
+    
+    echo -e "  With symbols : ${pass_full}${RESET}"
+
+    local pass_hex
+    pass_hex=$(openssl rand -hex 64 | head -c "$length")
+
+    echo -e "  Hex          : ${pass_hex}${RESET}"
+
+    echo
+
+    local entropy_alnum entropy_full
+    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
+    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
+
+    status=$?
+    error_check
+}
+
 audit-system() {
     local dependencie=lynis
     dependencie_checker
@@ -542,6 +611,7 @@ audit-system() {
     status=$?
     error_check
 }
+
 empty_trash() {
     local dependencie=shred
     dependencie_checker
@@ -602,6 +672,25 @@ empty_trash() {
     error_check
 }
 
+empty_trash--s() {
+    local dependencie=shred
+    dependencie_checker
+
+    TRASH_FILES="$HOME/.local/share/Trash/files"
+    TRASH_INFO="$HOME/.local/share/Trash/info"
+
+    find "$TRASH_FILES" -type f -print0 2>/dev/null \
+        | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+    find "$TRASH_FILES" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+
+    find "$TRASH_INFO" -type f -print0 2>/dev/null \
+        | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+
+    status=$?
+    error_check
+}
+
 delete-file() {
     local dependencie=shred
     dependencie_checker
@@ -639,6 +728,24 @@ delete-file() {
     error_check
 }
 
+delete-file--c() {
+    local dependencie=shred
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    shred -z -n 3 $3
+
+    shred -u $3
+
+    status=$?
+    error_check
+}
+
 remove_metadata() {
     local dependencie=exiftool
     dependencie_checker
@@ -654,6 +761,22 @@ remove_metadata() {
     fi
 
     gum confirm "Edit $file?" && exiftool -all= $file
+
+    status=$?
+    error_check
+}
+
+remove_metadata--c() {
+    local dependencie=exiftool
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    exiftool -all= $3
 
     status=$?
     error_check
@@ -725,15 +848,12 @@ update-apps() {
 # Encryption
 encryption_menu() {
     echo
-    gum_encryption_menu=$(gum choose Hash Explainer General-keys AES GPG "[↩] Return" "➜] Exit")
+    gum_encryption_menu=$(gum choose Hash General-keys AES GPG "[↩] Return" "➜] Exit")
     
     case $gum_encryption_menu in
         Hash)
         hash-passwd
         ;;
-        Explainer)
-            explainer_encryption
-            ;;
         General-keys)
             keys
             ;;
@@ -793,38 +913,12 @@ hash-passwd() {
     status=$?
     error_check
 }
-explainer_encryption() {
-    cat << EOF
-In the modern world encrypting your data and communication is key to ensure a private and secure world. In that set of mind we designed this encryption part of the toolbox. 
-
-Parts included:
-- general-keys
-- AES
-- GPG
-- Hash
-
-Hash :
-Hash a password with an cryptographic hash function.
-
-General Keys :
-General keys is a command to generate a key for cryptographic purposes.
-
-AES:
-AES is a menu to encrypt files / texts with the Advanced Encryption Standard protocol, it features two options for an 256-bit key or an 128-bit key. 256-bit is considered more secure and quantum resistant but 128-bit is faster and reasonably still secure.
-
-GPG:
-GPG is a menu to generate and delete keys, import/export keys, to list, sign and verify keys. It uses the Gnu Privacy Guard implementation of OpenPGP.
-
-Dependencie: openssl
-Dependencie: gpg
-EOF
-}
 
 keys() {
     local dependencie=openssl
     dependencie_checker
 
-    local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit)
+    local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit )
     echo "You selected $key_size as your key size"
 
     case $key_size in
@@ -856,6 +950,19 @@ keys() {
         return 0
         ;;
     esac
+
+    status=$?
+    error_check
+}
+
+keys--c() {
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    openssl rand -hex $3
 
     status=$?
     error_check
@@ -931,7 +1038,6 @@ encrypt_128() {
         local file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
-            echo "No file was selected"
             status=5
             error_check
             return 0
@@ -944,8 +1050,8 @@ encrypt_128() {
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        local delete_choice=$(gum choose yes no)
-        case $delete_choice in
+        local ddelete_choice=$(gum choose yes no)
+        case $ddelete_choice in
             yes)
                 shred -u -- "$file"
             ;;
@@ -958,7 +1064,6 @@ encrypt_128() {
         local text=$(gum write)
 
         if [[ -z "$text" ]]; then
-            echo "No input provided" >&2
             status=5
             error_check
             return 0
@@ -991,7 +1096,6 @@ encrypt_256() {
         local file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
-            echo "No file was selected"
             status=5
             error_check
             return 0
@@ -1004,8 +1108,8 @@ encrypt_256() {
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        local delete_choice=$(gum choose yes no)
-        case $delete_choice in
+        local ddelete_choice=$(gum choose yes no)
+        case $ddelete_choice in
             yes)
                 shred -u -- "$file"
             ;;
@@ -1018,7 +1122,6 @@ encrypt_256() {
         local text=$(gum write)
 
         if [[ -z "$text" ]]; then
-            echo "No input provided" >&2
             status=5
             error_check
             return 0
@@ -1050,7 +1153,6 @@ decrypt_128() {
         file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
-            echo "No file was selected"
             status=5
             error_check
             return 0
@@ -1063,8 +1165,8 @@ decrypt_128() {
         echo "Unencrypted file:   $output_file.aes" 
 
         echo "Delete original encrypted file?"
-        local elete_choice=$(gum choose yes no)
-        case $delete_choice in
+        local delete_choice=$(gum choose yes no)
+        case $ddelete_choice in
             yes)
                 shred -u -- "$file"
             ;;
@@ -1077,7 +1179,6 @@ decrypt_128() {
         local text=$(gum write)
 
         if [[ -z "$text" ]]; then
-            echo "No input provided" >&2
             status=5
             error_check
             return 0
@@ -1109,7 +1210,6 @@ decrypt_256() {
         file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
-            echo "No file was selected"
             status=5
             error_check
             return 0
@@ -1122,8 +1222,8 @@ decrypt_256() {
         echo "Unencrypted file:   $output_file.aes" 
 
         echo "Delete original encrypted file?"
-        local delete_choice=$(gum choose yes no)
-        case $delete_choice in
+        local ddelete_choice=$(gum choose yes no)
+        case $ddelete_choice in
             yes)
                 shred -u -- "$file"
             ;;
@@ -1136,7 +1236,6 @@ decrypt_256() {
         local text=$(gum write)
 
         if [[ -z "$text" ]]; then
-            echo "No input provided" >&2
             status=5
             error_check
             return 0
@@ -1234,7 +1333,6 @@ import-key() {
     local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         eturn 0
@@ -1245,6 +1343,22 @@ import-key() {
     status=$?
     error_check
 } 
+
+import-key--c() {
+    local dependencie=gpg
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    gpg --import $3
+
+    status=$?
+    error_check
+}
 
 export-key() {
     local dependencie=gpg
@@ -1258,6 +1372,28 @@ export-key() {
     status=$?
     error_check
 } 
+
+export-key--c() {
+    local dependencie=gpg
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    if [[ -z $4 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    gpg --export -a $3 $4.key
+
+    status=$?
+    error_check
+}
 
 list-keys() {
     local dependencie=gpg
@@ -1280,13 +1416,28 @@ sign() {
     local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         eturn 0
     fi
 
     gpg --sign $file
+
+    status=$?
+    error_check
+}
+
+sign--c() {
+    local dependencie=gpg
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    gpg --sign $3
 
     status=$?
     error_check
@@ -1300,13 +1451,28 @@ verify() {
     local file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
-        echo "No file was selected"
         status=5
         error_check
         eturn 0
     fi
 
 	gpg --verify $file
+
+    status=$?
+    error_check
+}
+
+verify--c() {
+    local dependencie=gpg
+    dependencie_checker
+
+    if [[ -z $3 ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    gpg --verify $3
 
     status=$?
     error_check
@@ -1373,118 +1539,48 @@ name-of-license() {
 # Error handling
 error_check() {
     echo
-    echo "Error status: "
 
     case $status in
         0)
-            echo -e "${GREEN}[✔] Succes / no error${RESET}"
+            echo 
         ;;
         1)
+            echo "Error status: "
             echo -e "${RED}[!] General/catchall error${RESET}"
         ;;
         2)
+            echo "Error status: "
             echo -e "${RED}[!] Misuse of shell builtin${RESET}"
         ;;
         3)
+            echo "Error status: "
             echo -e "${RED}[!] Invalid input${RESET}"
             ;;
         4)
+            echo "Error status: "
             echo -e "${RED}[!] Input does not meet the requirements of the input${RESET}"
             ;;
         5)
+            echo "Error status: "
             echo -e "${RED}[!] Empty input${RESET}"
             ;;
         6)
+            echo "Error status: "
             echo -e "[↩] Action aborted${RESET}"
             ;;
         7)
+            echo "Error status: "
             echo -e "${RED} Action failed, missing required part(s)${RESET}"
-            ;;
-        126)
-            echo -e "${RED}[!] Command found but not executable${RESET}"
-            ;;
-        127)
-            echo -e "${RED}[!] Command not found${RESET}"
-            ;;
-        128)
-            echo -e "${RED}[!] Invalid argument to exit${RESET}"
-            ;;
-        128+N)
-            echo -e "${RED}[!] Terminated by signal N${RESET}"
-            ;;
-        255)
-            echo -e "${RED}[!] Exit status out of range / uncaught error${RESET}"
             ;;
         *)
             echo -e "${RED}[!] Unhandled exit status: $status${RESET}" >&2
         ;;
     esac
 }
-# Alliases
-license() {
-    full-license
-}
-key() {
-    generate-key
-}
-password() {
-    generate-passwd
-}
-trash() {
-    emoty_trash
-}
-apps() {
-    update_apps
-}
-hide() {
-    hide_files
-}
-data() {
-    random_data
-}
-# Command dispatcher
-_INVISUX_COMMANDS=(
-    license
-    info
-    verify
-    sign
-    list-keys
-    export-keys
-    decrypt_256
-    decrypt_128
-    encrypt_256
-    encrypt_128
-    privacy_menu
-    security_menu
-    encryption_menu
-    license_menu
-    generate-passwd
-    aes_encrypt
-    aes_decrypt
-    keys
-    update-apps
-    empty_trash
-    delete-file
-    explainer_encryption
-    generate-key
-    remove_metadata
-    audit-system
-    dns_res
-    dns_conf
-    rand_mac
-    check_ip
-    check_tor
-    hide_files
-    hide_dot
-    concatenation
-    steganography
-    random_data
-    wipe-drive
-    found_easter_egg
-    view_metadata
-)
+
+
 # Main command
-_invisux_main_command() {
+invisux_main_command() {
     echo "Invisux  Copyright (C) 2026  JasperC"
     echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
     main_menu
@@ -1515,16 +1611,202 @@ main_menu() {
 }
 
 # Command handler
-    if [[ $# -eq 0 ]]; then
-        _invisux_main_command
-    elif [[ "$1" == "help" ]]; then
-        help "$2"
-    elif [[ " ${_INVISUX_COMMANDS[*]} " == *" $1 "* ]]; then
-        "$1"
+if [[ $# -eq 0]]; then
+    invisux_main_command
+elif [[ $1 == "license"]]; then
+    if [[ -z $2 ]]; then
+        full-license
+    elif [[ $2 == "-m" ]]; then
+        license_menu
     else
-        echo -e "${RED}[!] Unknown command: $1${RESET}"   
-        return 0
+        echo "Unknown option: $2"
     fi
+elif [[ $1 == "info"]]; then
+    info
+elif [[ $1 == "found_easter_egg"]]; then
+    found_easter_egg
+elif [[ $1 == "generate-key"]]; then
+    generate-key
+elif [[ $1 == "generate-key"]]; then
+    generate-key
+elif [[ $1 == "delete-key"]]; then
+    delete-key
+elif [[ $1 == "import-key"]]; then
+    if [[ -z $2 ]]; then
+        import-key
+    elif [[ $2 == "-c" ]]; then
+        import-key--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux import-key / invisux import-key--c {file}
+EOF
+    fi
+elif [[ $1 == "export-key"]]; then
+    if [[ -z $2 ]]; then
+        export-key
+    elif [[ $2 == "-c" ]]; then
+        export-key--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux export-key / invisux export-key--c {username} {file}
+EOF
+    fi
+elif [[ $1 == "list-keys" ]]; then
+    list-keys
+elif [[ $1 == "sign" ]]; then
+    if [[ -z $2 ]]; then
+        sign
+    elif [[ $2 == "-c" ]]; then
+        sign--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux sign / invisux sign--c {file}
+EOF
+    fi
+elif [[ $1 == "verify" ]]; then
+    if [[ -z $2 ]]; then
+        verify
+    elif [[ $2 == "-c" ]]; then
+        verify--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux verify / invisux verify--c {file}
+EOF
+    fi
+elif [[ $1 == "aes" ]]; then
+    aes_menu
+elif [[ $1 == "aes_decrypt" ]]; then
+    aes_decrypt
+elif [[ $1 == "aes_encrypt"]]; then
+    aes_encrypt
+elif [[ $1 == "encrypt_128"]]; then
+    encrypt_128
+elif [[ $1 == "encrypt_256"]]; then
+    encrypt_256
+elif [[ $1 == "decrypt_128"]]; then
+    decrypt_128
+elif [[ $1 == "decrypt_256"]]; then
+    decrypt_256
+elif [[ $1 == "keys" ]]; then
+    if [[ -z $2 ]]; then
+        keys
+    elif [[ $2 == "-c" ]]; then
+        keys--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux keys / invisux keys--c {hex}
+
+(Note: hex options are 16 24 32 64)
+EOF
+    fi
+elif [[ $1 == "hash-passwd"]]; then
+    hash-passwd
+elif [[ $1 == "update-apps"]]; then
+    update-apps
+elif [[ $1 == "remove_metadata" ]]; then
+    if [[ -z $2 ]]; then
+        remove_metadata
+    elif [[ $2 == "-c" ]]; then
+        remove_metadata--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux remove_metadata / invisux remove_metadata--c {file}
+EOF
+    fi
+elif [[ $1 == "delete-file" ]]; then
+    if [[ -z $2 ]]; then
+        delete-file
+    elif [[ $2 == "-c" ]]; then
+        delete-file--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux delete-file / invisux delete-file--c {file}
+EOF
+    fi
+elif [[ $1 == "empty_trash" ]]; then
+    if [[ -z $2 ]]; then
+        empty_trash
+    elif [[ $2 == "-c" ]]; then
+        empty_trash--s
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux empty_trash / invisux empty_trash--s 
+EOF
+    fi
+elif [[ $1 == "audit-system"]]; then
+    audit-system
+elif [[ $1 == "generate-passwd" ]]; then
+    if [[ -z $2 ]]; then
+        generate-passwd
+    elif [[ $2 == "-c" ]]; then
+        generate-passwd--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux generate-passwd / invisux generate-passwd--c {characters}
+
+(Note: options are 8-128)
+EOF
+    fi
+elif [[ $1 == "wipe-drive" ]]; then
+    if [[ -z $2 ]]; then
+        wipe-drive
+    elif [[ $2 == "-c" ]]; then
+        wipe-drive--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux wipe-drive / invisux wipe-drive--c 
+EOF
+elif [[ $1 == "check-ports" ]]; then
+    check_ports
+elif [[ $1 == "dns-res" ]]; then
+    dns_res
+elif [[ $1 == "dns-conf" ]]; then
+    dns_conf
+elif [[ $1 == "rand-mac" ]]; then
+    rand_mac
+elif [[ $1 == "check-tor" ]]; then
+    check_tor
+elif [[ $1 == "check-ip" ]]; then
+    check_ip
+elif [[ $1 == "view-metadata" ]]; then
+    view_metadata
+elif [[ $1 == "hide-files" ]]; then
+    hide_files
+elif [[ $1 == "hide-dot" ]]; then
+    hide_dot
+elif [[ $1 == "concatenation" ]]; then
+    concatenation
+elif [[ $1 == "steganography" ]]; then
+    steganography
+elif [[ $1 == "random-data" ]]; then
+    random_data
+else
+    echo "Unknown command:  $1"
+fi 
+
+# normal TUI
+# -c CLI 
+# -s SILENT
 
 # Creators note: if you are reading this, thank you for checking out my script! Love you all <3
 # If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
