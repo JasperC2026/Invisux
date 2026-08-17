@@ -1611,9 +1611,9 @@ main_menu() {
 }
 
 # Command handler
-if [[ $# -eq 0]]; then
+if [[ $# -eq 0 ]]; then
     invisux_main_command
-elif [[ $1 == "license"]]; then
+elif [[ $1 == "license "]]; then
     if [[ -z $2 ]]; then
         full-license
     elif [[ $2 == "-m" ]]; then
@@ -1621,17 +1621,17 @@ elif [[ $1 == "license"]]; then
     else
         echo "Unknown option: $2"
     fi
-elif [[ $1 == "info"]]; then
+elif [[ $1 == "info" ]]; then
     info
-elif [[ $1 == "found_easter_egg"]]; then
+elif [[ $1 == "found_easter_egg" ]]; then
     found_easter_egg
-elif [[ $1 == "generate-key"]]; then
+elif [[ $1 == "generate-key" ]]; then
     generate-key
-elif [[ $1 == "generate-key"]]; then
+elif [[ $1 == "generate-key" ]]; then
     generate-key
-elif [[ $1 == "delete-key"]]; then
+elif [[ $1 == "delete-key" ]]; then
     delete-key
-elif [[ $1 == "import-key"]]; then
+elif [[ $1 == "import-key" ]]; then
     if [[ -z $2 ]]; then
         import-key
     elif [[ $2 == "-c" ]]; then
@@ -1643,7 +1643,7 @@ Ussage:
 invisux import-key / invisux import-key--c {file}
 EOF
     fi
-elif [[ $1 == "export-key"]]; then
+elif [[ $1 == "export-key" ]]; then
     if [[ -z $2 ]]; then
         export-key
     elif [[ $2 == "-c" ]]; then
@@ -1685,15 +1685,15 @@ elif [[ $1 == "aes" ]]; then
     aes_menu
 elif [[ $1 == "aes_decrypt" ]]; then
     aes_decrypt
-elif [[ $1 == "aes_encrypt"]]; then
+elif [[ $1 == "aes_encrypt" ]]; then
     aes_encrypt
-elif [[ $1 == "encrypt_128"]]; then
+elif [[ $1 == "encrypt_128" ]]; then
     encrypt_128
-elif [[ $1 == "encrypt_256"]]; then
+elif [[ $1 == "encrypt_256" ]]; then
     encrypt_256
-elif [[ $1 == "decrypt_128"]]; then
+elif [[ $1 == "decrypt_128" ]]; then
     decrypt_128
-elif [[ $1 == "decrypt_256"]]; then
+elif [[ $1 == "decrypt_256" ]]; then
     decrypt_256
 elif [[ $1 == "keys" ]]; then
     if [[ -z $2 ]]; then
@@ -1709,9 +1709,9 @@ invisux keys / invisux keys--c {hex}
 (Note: hex options are 16 24 32 64)
 EOF
     fi
-elif [[ $1 == "hash-passwd"]]; then
+elif [[ $1 == "hash-passwd" ]]; then
     hash-passwd
-elif [[ $1 == "update-apps"]]; then
+elif [[ $1 == "update-apps" ]]; then
     update-apps
 elif [[ $1 == "remove_metadata" ]]; then
     if [[ -z $2 ]]; then
@@ -1749,7 +1749,7 @@ Ussage:
 invisux empty_trash / invisux empty_trash--s 
 EOF
     fi
-elif [[ $1 == "audit-system"]]; then
+elif [[ $1 == "audit-system" ]]; then
     audit-system
 elif [[ $1 == "generate-passwd" ]]; then
     if [[ -z $2 ]]; then
