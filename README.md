@@ -4,7 +4,7 @@
 
 # Invisux
 
-[![Version](https://img.shields.io/badge/1.0.0-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
+[![Version](https://img.shields.io/badge/1.1-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
 [![License](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)
 [![Language](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)]()
 [![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)]()
@@ -56,6 +56,7 @@ Invisux is organized into three main sections — **Privacy**, **Security**, and
 | `remove_metadata` | Strip metadata from an image to make it harder to trace its origin and protect your privacy when sharing. |
 | `empty_trash` | Securely empty the trash, making deleted files harder to recover. |
 | `delete-file` | Securely remove a specific file, making it harder to recover. |
+| `wipe-drive`  | Securely wipe an USB drive. |
 
 ### Security
 
