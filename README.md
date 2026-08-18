@@ -34,19 +34,7 @@ chmod +x Installer.sh
 ./Installer.sh
 ```
 
-Verify the integrity of the downloaded files using SHA256 checksums.
-
-| File          | SHA256 Checksum |
-|---------------|------------------|
-| `Installer.sh`   | `aed9ca3d5caab19dbdfc4984aecd1806e376681b647939edb0bb97df781b15d9` |
-| `invisux-v1.0`   | `29203771b79aede98552b1d875f32d88d275cfba2ac12a2fed6728d57edf7e57` |
-
-```bash
-sha256sum Installer.sh
-sha256sum invisux-v1.0
-```
-
-For secuurity advice, please verify any scripts you run on a system don't blindly trust any maintaner. I personally do my best to provide good software without bugs and I have no intent to harm your system but I am not perfect, neither is my software.
+For secuurity advice, please verify any scripts you run on a system, don't blindly trust any maintaner. I personally do my best to provide good software without bugs and I have no intent to harm your system but I am not perfect, neither is my software.
 
 ---
 
@@ -119,6 +107,8 @@ Invisux requires **Gum** to run. All other dependencies are optional and are onl
 | exiftool | Optional |
 | gpg | Optional |
 | steghide | Optional |
+| dig | Optional |
+| lynis | Optional |
 
 ---
 

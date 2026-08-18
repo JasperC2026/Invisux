@@ -1495,7 +1495,7 @@ EOF
     echo "                 Created by: JasperC" 
     echo
 
-    echo "Version: Alpha stage for 1.1"
+    echo "Version: 1.1"
 }
 
 license_menu() {
