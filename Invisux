@@ -85,7 +85,7 @@ GREEN="\e[32m"
 YELLOW="\e[93m"
 BLUE="\e[34m"
 CYAN="\e[36m"
-PURPLE="\e[35m"
+PURPLE="\e[38;5;99m"
 ORANGE="\e[38;5;208m"
 WHITE="\e[97m"    
 BLACK="\e[30m"   
@@ -1581,8 +1581,8 @@ error_check() {
 
 # Main command
 invisux_main_command() {
-    echo "Invisux  Copyright (C) 2026  JasperC"
-    echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
+    echo -e "${PURPLE}${BOLD}Invisux - Copyright (C) 2026 JasperC${RESET}"
+    echo -e "This program comes with ${BOLD}ABSOLUTELY NO WARRANTY.${RESET} This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
     main_menu
 }
 main_menu() {
