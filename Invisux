@@ -264,8 +264,11 @@ random_data() {
         local dependencie=faker
         dependencie_checker
 
-        name=faker name
-        echo "${BOLD} $name ${RESET}"
+        name=$(faker name)
+        echo -e "${BOLD} $name ${RESET}"
+
+        status=$?
+        error_check
         ;;
         "String")
         echo "Select size:  "
@@ -281,13 +284,14 @@ random_data() {
         dependencie_checker
 
         openssl rand -base64 $numbers
+
+        status=$?
+        error_check
         ;;
         "Random username")
         echo "Visit https://proton.me/pass/username-generator or if you use tor https://protonmailrmez3lotccipshtkleegetolb73fuirgj7r4o4vfu7ozyd.onion/pass/username-generator."
         ;;
     esac
-
-    error_check
 }
 network_menu() {
     gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
