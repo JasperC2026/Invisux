@@ -1748,9 +1748,17 @@ aes_menu / aes              - AES TUI menu
 aes_encrypt                 - AES encryption menu
 aes_decrypt                 - AES decryption menu
 encrypt_128                 - AES encryption menu for 128 bit keys
+    -t                          - CLI option for text
+    -f                          - CLI option for files
 encrypt_256                 - AES encryption menu for 256 bit keys
+    -t                          - CLI option for text
+    -f                          - CLI option for files
 decrypt_128                 - AES decryption menu for 128 bit keys
+    -t                          - CLI option for text
+    -f                          - CLI option for files
 decrypt_256                 - AES decryption menu for 256 bit keys
+    -t                          - CLI option for text
+    -f                          - CLI option for files
 keys                        - generate a 16 / 32 / 48 / 64 hex key
 generate-key / genkey       - Generate a gpg key
 delete-key / delkey         - Delete a gpg key 
