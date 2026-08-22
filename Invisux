@@ -1590,7 +1590,7 @@ invisux_main_command() {
     main_menu
 }
 main_menu() {
-    gum_main_option=$(gum choose Privacy Security Encryption Info License "➜] Exit")
+    gum_main_option=$(gum choose Privacy Security Encryption Help Info License "➜] Exit")
     
     case $gum_main_option in
         Privacy)
@@ -1605,6 +1605,9 @@ main_menu() {
         Info)
             info
             ;;
+        Help)
+            help
+            ;;
         License)
             license_menu
             ;;
@@ -1614,9 +1617,20 @@ main_menu() {
     esac
 }
 
+# Help command 
+help() {
+        cat << 'EOF'
+EOF
+}
 # Command handler
 if [[ $# -eq 0 ]]; then
     invisux_main_command
+elif [[ $1 == "help" ]]; then
+    help
+elif [[ $1 == "-h" ]]; then
+    help
+elif [[ $1 == "--help" ]]; then
+    help
 elif [[ $1 == "license" ]]; then
     if [[ -z $2 ]]; then
         full-license
@@ -1625,12 +1639,18 @@ elif [[ $1 == "license" ]]; then
     else
         echo "Unknown option: $2"
     fi
+elif [[ $1 == "-l" ]]; then
+    license
+elif [[ $1 == "--license" ]]; then
+    license
 elif [[ $1 == "info" ]]; then
+    info
+elif [[ $1 == "-i" ]]; then
+    info
+elif [[ $1 == "--info" ]]; then
     info
 elif [[ $1 == "found_easter_egg" ]]; then
     found_easter_egg
-elif [[ $1 == "generate-key" ]]; then
-    generate-key
 elif [[ $1 == "generate-key" ]]; then
     generate-key
 elif [[ $1 == "delete-key" ]]; then
@@ -1685,6 +1705,8 @@ Ussage:
 invisux verify / invisux verify--c {file}
 EOF
     fi
+elif [[ $1 == "aes_menu" ]]; then
+    aes_menu
 elif [[ $1 == "aes" ]]; then
     aes_menu
 elif [[ $1 == "aes_decrypt" ]]; then
@@ -1715,9 +1737,25 @@ EOF
     fi
 elif [[ $1 == "hash-passwd" ]]; then
     hash-passwd
+elif [[ $1 == "hash-passwd" ]]; then
+    hash
 elif [[ $1 == "update-apps" ]]; then
     update-apps
+elif [[ $1 == "update-apps" ]]; then
+    apps
 elif [[ $1 == "remove_metadata" ]]; then
+    if [[ -z $2 ]]; then
+        remove_metadata
+    elif [[ $2 == "-c" ]]; then
+        remove_metadata--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux remove_metadata / invisux remove_metadata--c {file}
+EOF
+    fi
+elif [[ $1 == "metadata" ]]; then
     if [[ -z $2 ]]; then
         remove_metadata
     elif [[ $2 == "-c" ]]; then
@@ -1753,9 +1791,35 @@ Ussage:
 invisux empty_trash / invisux empty_trash--s 
 EOF
     fi
+elif [[ $1 == "trash" ]]; then
+    if [[ -z $2 ]]; then
+        empty_trash
+    elif [[ $2 == "-c" ]]; then
+        empty_trash--s
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux empty_trash / invisux empty_trash--s 
+EOF
+    fi
 elif [[ $1 == "audit-system" ]]; then
     audit-system
 elif [[ $1 == "generate-passwd" ]]; then
+    if [[ -z $2 ]]; then
+        generate-passwd
+    elif [[ $2 == "-c" ]]; then
+        generate-passwd--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux generate-passwd / invisux generate-passwd--c {characters}
+
+(Note: options are 8-128)
+EOF
+    fi
+elif [[ $1 == "password" ]]; then
     if [[ -z $2 ]]; then
         generate-passwd
     elif [[ $2 == "-c" ]]; then
@@ -1783,15 +1847,23 @@ EOF
     fi
 elif [[ $1 == "check-ports" ]]; then
     check_ports
+elif [[ $1 == "ports" ]]; then
+    check_ports
 elif [[ $1 == "dns-res" ]]; then
     dns_res
 elif [[ $1 == "dns-conf" ]]; then
     dns_conf
 elif [[ $1 == "rand-mac" ]]; then
     rand_mac
+elif [[ $1 == "mac" ]]; then
+    rand_mac
 elif [[ $1 == "check-tor" ]]; then
     check_tor
+elif [[ $1 == "tor" ]]; then
+    check_tor
 elif [[ $1 == "check-ip" ]]; then
+    check_ip
+elif [[ $1 == "ip" ]]; then
     check_ip
 elif [[ $1 == "view-metadata" ]]; then
     view_metadata
