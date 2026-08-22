@@ -4,7 +4,7 @@
 
 # Invisux
 
-[![Version](https://img.shields.io/badge/1.1-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
+[![Version](https://img.shields.io/badge/v1.2-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
 [![License](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)
 [![Language](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)]()
 [![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)]()

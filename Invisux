@@ -1710,7 +1710,7 @@ EOF
     echo "                 Created by: JasperC" 
     echo
 
-    echo "Version: 1.1"
+    echo "Version: 1.2"
 }
 
 license_menu() {
