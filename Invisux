@@ -121,6 +121,7 @@ privacy_menu() {
         ;;
     esac
 }
+
 hide_files() {
     hide_menu=$(gum choose "Hide in filesystem (low security)" "Concatenation in file (mid security)" "Steganography (very secure)")
     
@@ -136,6 +137,7 @@ hide_files() {
         ;;
     esac
 }
+
 hide_dot() {
     echo "Enter file to hide"
     local file=$(gum file)
@@ -148,8 +150,18 @@ hide_dot() {
 
     mv $file .$file
 
+    status=$?
     error_check
 }
+
+hide_dot--c() {
+    if [[ -z $4 ]]; then
+        return 0
+    fi
+
+    mv $4 .$4
+}
+
 concatenation() {
     local dependencie=zip
     dependencie_checker
@@ -176,8 +188,24 @@ concatenation() {
 
     cat $jpg $zip > $jpg
 
+    status=$?
     error_check
 }
+
+concatenation() {
+    if [[ -z $3 ]]; then
+        return 0
+    fi
+
+    if [[ -z $4 ]]; then
+        return 0
+    fi
+
+    zip=$(zip $3)
+
+    cat $4 $zip > $4
+}
+
 steganography() {
     steg_menu=$(gum choose Embed Extract)
     case $steg_menu in
@@ -249,13 +277,42 @@ steganography() {
                 return 0
             fi
 
-            steghide extract -sf $file "password"
+            steghide extract -sf $file "$password"
             
+            status=$?
             error_check
         ;;
     esac
-
 }
+
+steganograph--e() {
+    if [[ -z $3 ]]; then
+        return 0
+    fi
+
+    if [[ -z $4 ]]; then
+        return 0
+    fi
+
+    if [[ -z $5 ]]; then
+        return 0
+    fi
+
+    steghide embed -cf $jpg -ef $3 "$5"
+}
+
+steganograph--d() {
+    if [[ -z $3 ]]; then
+        return 0
+    fi
+
+    if [[ -z $4 ]]; then
+        return 0
+    fi
+
+    steghide extract -sf $3 "$4"
+}
+
 random_data() {
     data_menu=$(gum choose "Random name" "String" "Random username")
 
@@ -293,6 +350,7 @@ random_data() {
         ;;
     esac
 }
+
 network_menu() {
     gum_network_menu=$(gum choose "Check ports" "Check DNS resolution" "Verify DNS Config" "Randomize MAC adress" "Check TOR" "Check IP" "[↩] Return" "➜] Exit")
 
@@ -323,12 +381,14 @@ network_menu() {
             ;;
     esac
 }
+
 check_ports() {
     netstat -tuln
 
     status=$?
     error_check
 }
+
 dns_res() {
     echo "Checking DNS resolution with testing to reach a server"
     echo
@@ -363,6 +423,7 @@ dns_conf() {
     status=$?
     error_check
 }
+
 rand_mac() {
     sudo ip link set eth0 down
     sudo ip link set eth0 address $(xxd -c1 -l6 /dev/urandom | tr -dc '[:xdigit:]' | head -c17)
@@ -371,6 +432,7 @@ rand_mac() {
     status=$?
     error_check
 }
+
 check_tor() {
     echo "Service status:   "
     systemctl status tor 
@@ -378,6 +440,7 @@ check_tor() {
     echo
     echo "Open check.torproject.org in your browser to check if tor is used"
 }
+
 check_ip() {
     local dependencie=dig
     dependencie_checker
@@ -1809,11 +1872,12 @@ tor / check-tor             - Check tor connection
 ip / check-ip               - Get your public IP adress
 hide_files                  - Hide files menu
 hide-dot                    - Hide a file on your system to add the . extension
-    -c                             - CLI version
+    -c (file)                      - CLI version
 concatenation               - Hide a file within a file
-    -c                             - CLI version
+    -c (file) (hide-in)            - CLI version
 steganography               - Securely hide a file within a file
-    -c                             - CLI version
+    -d (file) (pass)               - Decrypt
+    -e (file) (hide-in) (pass)     - Encrypt
 random-data                 - Random data menu
 EOF
 }
@@ -2224,7 +2288,7 @@ elif [[ $1 == "hide-dot" ]]; then
         echo "Unknown option: $2"
         cat << 'EOF'
 Ussage:
-invisux hide_dot / invisux hide_dot -c
+invisux hide_dot / invisux hide_dot -c {file}
 EOF
     fi
 elif [[ $1 == "concatenation" ]]; then
@@ -2236,11 +2300,29 @@ elif [[ $1 == "concatenation" ]]; then
         echo "Unknown option: $2"
         cat << 'EOF'
 Ussage:
-invisux concatenation / invisux concatenation -c
+invisux concatenation  / invisux concatenation -c {file} {hide-in}
+
+Note:
+the hide-in file needs to be a JPG.
 EOF
     fi
 elif [[ $1 == "steganography" ]]; then
-    steganography
+    if [[ -z $2 ]]; then
+        steganography
+    elif [[ $2 == "-d" ]]; then
+        steganography--d
+    elif [[ $2 == "-e" ]]; then
+        steganography--e
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux steganography / invisux steganography -d {file} {password} / invisux steganography -e {file} {hide-in} {password}
+
+Note:
+the hide-in file needs to be a JPG.
+EOF
+    fi
 elif [[ $1 == "random-data" ]]; then
     random_data
 else
