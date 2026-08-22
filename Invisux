@@ -99,7 +99,7 @@ privacy_menu() {
 
     case $gum_privacy_menu in
         "Hide file(s)")
-        hide_files
+            hide_files
         ;;
         "Random data")
             random_data
@@ -1582,6 +1582,70 @@ error_check() {
     esac
 }
 
+# Help command 
+help() {
+    cat << 'EOF'
+Usage: invisux [command] [options]
+
+Invisux is a Bash script designed to handle privacy and security tasks on your Linux system through the terminal. Built with simplicity and lightweightness in mind, Invisux consolidates common privacy and security operations into a single, portable tool.
+This tool has 2 ussage options TUI and CLI, if you just ype 'invisux' you get the main TUI. Using invisux [command] brings you to the specific TUI for that command. Use the options to use it cli-wise.
+
+General commands:
+license / -l / --license    - See license info of this tool
+help / -h / --help          - See this helo menu
+info / -i / --info          - See current version info of this tool 
+
+ENCRYPTION
+aes_menu / aes              - AES TUI menu
+aes_encrypt                 - AES encryption menu
+aes_decrypt                 - AES decryption menu
+encrypt_128                 - AES encryption menu for 128 bit keys
+encrypt_256                 - AES encryption menu for 256 bit keys
+decrypt_128                 - AES decryption menu for 128 bit keys
+decrypt_256                 - AES decryption menu for 256 bit keys
+keys                        - generate a 16 / 32 / 48 / 64 hex key
+generate-key / genkey       - Generate a gpg key
+delete-key / delkey         - Delete a gpg key 
+import-key                  - Import a gpg key from a file
+    -c (file)                   - CLI version
+export-key                  - Export gpg key(s) to a file
+    -c (file)                   - CLI version
+list-keys                   - List gpg key(s)
+sign                        - Sign a file with a gpg key
+    -c (file)                   - CLI version
+verify                      - Verify a gpg key
+    -c (file)                   - CLI version
+
+SECURITY   
+hash / hass-passwd          - Hash a paswword
+apps / update-apps          - Update apps on system
+delete-file                 - Delete a file securely from systen
+    -c (file)                   - CLI version
+trash / empty-trash         - Securely empty system trash
+    -s                          - Silent
+audit-system                - Security audit for system
+password / generate-passwd  - Generate a password (8-128 bit)
+    -c (lenght)                 - CLI version
+wipe-drive                  - Securely wipe a USB drive
+    -c (drive)                  - CLI version
+
+PRIVACY
+metadata / remove_metadata  - Remove metadata from a image
+    -c (file)                   - CLI version
+view-metadata               - View metadata of a file
+ports / check-ports         - See open ports on system
+dns-res                     - See DNS resolution
+dns-conf                    - See DNS configuration
+rand-mac                    - Randomize MAC adress
+tor / check-tor             - Check tor connection
+ip / check-ip               - Get your public IP adress
+hide_files                  - Hide files menu
+hide-dot                    - Hide a file on your system to add the . extension
+concatenation               - Hide a file within a file
+steganography               - Securely hide a file within a file
+random-data                 - Random data menu
+EOF
+}
 
 # Main command
 invisux_main_command() {
@@ -1617,11 +1681,6 @@ main_menu() {
     esac
 }
 
-# Help command 
-help() {
-        cat << 'EOF'
-EOF
-}
 # Command handler
 if [[ $# -eq 0 ]]; then
     invisux_main_command
@@ -1653,7 +1712,11 @@ elif [[ $1 == "found_easter_egg" ]]; then
     found_easter_egg
 elif [[ $1 == "generate-key" ]]; then
     generate-key
+elif [[ $1 == "genkey" ]]; then
+    generate-key
 elif [[ $1 == "delete-key" ]]; then
+    delete-key
+elif [[ $1 == "delkey" ]]; then
     delete-key
 elif [[ $1 == "import-key" ]]; then
     if [[ -z $2 ]]; then
