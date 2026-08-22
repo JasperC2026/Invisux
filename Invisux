@@ -1743,6 +1743,13 @@ verify                      - Verify a gpg key
 SECURITY   
 hash / hass-passwd          - Hash a paswword
 apps / update-apps          - Update apps on system
+    flatpak
+    apt
+    snap
+    yum
+    dnf
+    zypper
+    pacman
 delete-file                 - Delete a file securely from systen
     -c (file)                   - CLI version
 trash / empty-trash         - Securely empty system trash
@@ -1971,9 +1978,41 @@ elif [[ $1 == "hash-passwd" ]]; then
 elif [[ $1 == "hash-passwd" ]]; then
     hash
 elif [[ $1 == "update-apps" ]]; then
-    update-apps
-elif [[ $1 == "update-apps" ]]; then
-    apps
+    if [[ -z $2 ]]; then
+        update-apps
+    elif [[ $2 == "apt" ]]
+        sudo apt update -y && sudo apt upgrade -y
+    elif [[ $2 == "flatpak" ]]
+        sudo flatpak update
+    elif [[ $2 == "pacman" ]]
+        sudo pacman -Syu --quiet --noconfirm
+    elif [[ $2 == "snap" ]]
+        sudo snap refresh
+    elif [[ $2 == "dnf" ]]
+        sudo dnf upgrade --assumeyes
+    elif [[ $2 == "zypper" ]]
+        sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+    elif [[ $2 == "yum" ]]
+        sudo yum update -y
+    fi
+elif [[ $1 == "apps" ]]; then
+    if [[ -z $2 ]]; then
+        update-apps
+    elif [[ $2 == "apt" ]]
+        sudo apt update -y && sudo apt upgrade -y
+    elif [[ $2 == "flatpak" ]]
+        sudo flatpak update
+    elif [[ $2 == "pacman" ]]
+        sudo pacman -Syu --quiet --noconfirm
+    elif [[ $2 == "snap" ]]
+        sudo snap refresh
+    elif [[ $2 == "dnf" ]]
+        sudo dnf upgrade --assumeyes
+    elif [[ $2 == "zypper" ]]
+        sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
+    elif [[ $2 == "yum" ]]
+        sudo yum update -y
+    fi
 elif [[ $1 == "remove_metadata" ]]; then
     if [[ -z $2 ]]; then
         remove_metadata
