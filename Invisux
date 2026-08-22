@@ -2016,7 +2016,7 @@ EOF
 elif [[ $1 == "hash-passwd" ]]; then
     if [[ -z $2 ]]; then
         hash-passwd
-    elif [[ $2 == "-c" ]]
+    elif [[ $2 == "-c" ]]; then
         hash-passwd--c
     else
         echo "Unknown option: $2"
@@ -2030,7 +2030,7 @@ EOF
 elif [[ $1 == "hash" ]]; then
     if [[ -z $2 ]]; then
         hash-passwd
-    elif [[ $2 == "-c" ]]
+    elif [[ $2 == "-c" ]]; then
         hash-passwd--c
     else
         echo "Unknown option: $2"
@@ -2044,19 +2044,19 @@ EOF
 elif [[ $1 == "update-apps" ]]; then
     if [[ -z $2 ]]; then
         update-apps
-    elif [[ $2 == "apt" ]]
+    elif [[ $2 == "apt" ]]; then
         sudo apt update -y && sudo apt upgrade -y
-    elif [[ $2 == "flatpak" ]]
+    elif [[ $2 == "flatpak" ]]; then
         sudo flatpak update
-    elif [[ $2 == "pacman" ]]
+    elif [[ $2 == "pacman" ]]; then
         sudo pacman -Syu --quiet --noconfirm
-    elif [[ $2 == "snap" ]]
+    elif [[ $2 == "snap" ]]; then
         sudo snap refresh
-    elif [[ $2 == "dnf" ]]
+    elif [[ $2 == "dnf" ]]; then
         sudo dnf upgrade --assumeyes
-    elif [[ $2 == "zypper" ]]
+    elif [[ $2 == "zypper" ]]; then
         sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
-    elif [[ $2 == "yum" ]]
+    elif [[ $2 == "yum" ]]; then
         sudo yum update -y
     else
         echo "Unknown option: $2"
@@ -2068,19 +2068,19 @@ EOF
 elif [[ $1 == "apps" ]]; then
     if [[ -z $2 ]]; then
         update-apps
-    elif [[ $2 == "apt" ]]
+    elif [[ $2 == "apt" ]]; then
         sudo apt update -y && sudo apt upgrade -y
-    elif [[ $2 == "flatpak" ]]
+    elif [[ $2 == "flatpak" ]]; then
         sudo flatpak update
-    elif [[ $2 == "pacman" ]]
+    elif [[ $2 == "pacman" ]]; then
         sudo pacman -Syu --quiet --noconfirm
-    elif [[ $2 == "snap" ]]
+    elif [[ $2 == "snap" ]]; then
         sudo snap refresh
-    elif [[ $2 == "dnf" ]]
+    elif [[ $2 == "dnf" ]]; then
         sudo dnf upgrade --assumeyes
-    elif [[ $2 == "zypper" ]]
+    elif [[ $2 == "zypper" ]]; then
         sudo zypper refresh --no-confirm && sudo zypper update --no-confirm
-    elif [[ $2 == "yum" ]]
+    elif [[ $2 == "yum" ]]; then
         sudo yum update -y
     else
         echo "Unknown option: $2"
@@ -2216,9 +2216,29 @@ elif [[ $1 == "view-metadata" ]]; then
 elif [[ $1 == "hide-files" ]]; then
     hide_files
 elif [[ $1 == "hide-dot" ]]; then
-    hide_dot
+    if [[ -z $2 ]]; then
+        hide_dot
+    elif [[ $2 == "-c" ]]; then
+        hide_dot--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux hide_dot / invisux hide_dot -c
+EOF
+    fi
 elif [[ $1 == "concatenation" ]]; then
-    concatenation
+    if [[ -z $2 ]]; then
+        concatenation
+    elif [[ $2 == "-c" ]]; then
+        concatenation--c
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux concatenation / invisux concatenation -c
+EOF
+    fi
 elif [[ $1 == "steganography" ]]; then
     steganography
 elif [[ $1 == "random-data" ]]; then
