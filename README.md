@@ -67,6 +67,7 @@ Invisux is organized into three main sections — **Privacy**, **Security**, and
 | `update-apps` | Interactive TUI to update your system, with support for different package managers. |
 | `generate-passwd` | Generate a secure password between 8 and 128 characters. |
 | `hash-passwd` | Hash a password. |
+| `check-hash` | Check hash of a file |
 
 ### Encryption
 
@@ -112,6 +113,12 @@ Invisux requires **Gum** to run. All other dependencies are optional and are onl
 | lynis | Optional |
 
 ---
+
+
+## Hashes (sha256)
+1.0: 29203771b79aede98552b1d875f32d88d275cfba2ac12a2fed6728d57edf7e57  invisux-v1.0
+1.1: 6fd0653b1777a13a931eb2678991e9350a6e643bc104c0e87a2ebffaad9895da  Invisux
+1.2: 125f46938c1e339cfcc4d3f1b334a8c07ccbf435834b2e1de33933a6a840abf8  Invisux
 
 ## Thanks
 

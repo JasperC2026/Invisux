@@ -105,7 +105,7 @@ if [[ $status == "yes" ]]; then
         sudo chmod +x "$dir/invisux"
         sudo cp "$dir/invisux" /usr/local/bin/invisux
     elif [[ $choice == "specific-version" ]]; then
-        read -p "Options: V1.0/V1.1" option
+        read -p "Options: V1.0/V1.1/V1.2" option
 
         case $option in
             V1.0)
@@ -116,14 +116,14 @@ if [[ $status == "yes" ]]; then
             sudo cp "$dir/invisux-v1.0" /usr/local/bin/invisux
             ;;
             V1.1)
-            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.1/invisux-v1.0
+            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.1/Invisux
             install
             dir=$(pwd)
             sudo chmod +x "$dir/invisux"
             sudo cp "$dir/invisux" /usr/local/bin/invisux
             ;;
             V1.2)
-            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.2/invisux-v1.0
+            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.2/Invisux
             install
             dir=$(pwd)
             sudo chmod +x "$dir/invisux"

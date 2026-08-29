@@ -471,7 +471,7 @@ view_metadata() {
 # Security
 security_menu() {
     echo
-    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Wipe a drive" "Update apps" "[↩] Return" "➜] Exit")
+    gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Wipe a drive" "Update apps" "Check hash" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
         "Generate a password")
@@ -491,6 +491,9 @@ security_menu() {
             ;;
         "Update apps")
             update-apps
+            ;;
+        "Check hash")
+            check-hash
             ;;
         "[↩] Return")
             main_menu
@@ -1003,6 +1006,54 @@ hash-passwd--c() {
     else
         return 0
     fi
+}
+
+check-hash() {
+    echo "What file do you want to check?"
+    local file=$(gum file)
+
+    if [[ -z $file ]]; then 
+        echo "No input provided" >&2
+        status=5
+        error_check
+        return 0
+    fi
+
+    echo "What protocol is the checksum of?"
+    local protocol=$(gum choose SHA256 SHA1 MD5)
+
+    case $protocol in
+        SHA256)
+        sha256sum $file ;;
+        SHA1)
+        sha1sum $file ;;
+        MD5)
+        md5shum $file ;;
+    esac
+
+    status=$?
+    error_check
+}
+
+check-hash--c() {
+    if [[ -z $3 ]]; then 
+        return 0
+    fi
+
+    if [[ -z $4 ]]; then 
+        return 0
+    fi
+
+    if [[ ! -e $3 ]]; then
+        return 0
+    fi
+
+    if [[ $4 == "md5" ]]; then
+        md5sum $3
+    elif [[ $4 == "sha256" ]]; then
+        sha256sum $3
+    elif [[ $4 == "sha1" ]]; then
+        sha1sum $3
 }
 
 keys() {
@@ -1835,7 +1886,9 @@ sign                        - Sign a file with a gpg key
 verify                      - Verify a gpg key
     -c (file)                   - CLI version
 
-SECURITY   
+SECURITY
+check-hash                  - Check hash of a file
+    -c (file) (protocol)        - CLI version (sha256, sha1, md5)
 hash / hass-passwd          - Hash a paswword
     md5
     sha256
@@ -2325,6 +2378,21 @@ EOF
     fi
 elif [[ $1 == "random-data" ]]; then
     random_data
+elif [[ $1 == "check-hash" ]]; then
+    if [[ -z $2 ]]; then
+        check-hash
+    elif [[ $2 =="-c" ]]; then
+        check-hash--C
+    else
+        echo "Unknown option: $2"
+        cat << 'EOF'
+Ussage:
+invisux check-hash / invisux check-hash -c {file} {protocol}
+
+Protocols are: md5, sha256, sha1
+EOF
+    fi
+    fi
 else
     echo "Unknown command:  $1"
 fi 
