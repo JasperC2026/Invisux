@@ -119,14 +119,14 @@ if [[ $status == "yes" ]]; then
             curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.1/Invisux
             install
             dir=$(pwd)
-            sudo chmod +x "$dir/invisux"
+            sudo chmod +x "$dir/Invisux"
             sudo cp "$dir/invisux" /usr/local/bin/invisux
             ;;
             V1.2)
             curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.2/Invisux
             install
             dir=$(pwd)
-            sudo chmod +x "$dir/invisux"
+            sudo chmod +x "$dir/Invisux"
             sudo cp "$dir/invisux" /usr/local/bin/invisux
             ;;
             *)
