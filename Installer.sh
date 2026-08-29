@@ -109,25 +109,25 @@ if [[ $status == "yes" ]]; then
 
         case $option in
             V1.0)
-            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.0/invisux-v1.0
+            curl -Lo https://codeberg.org/JasperC/Invisux/releases/download/v1.0/invisux-v1.0
             install
             dir=$(pwd)
             sudo chmod +x "$dir/invisux-v1.0"
             sudo cp "$dir/invisux-v1.0" /usr/local/bin/invisux
             ;;
             V1.1)
-            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.1/Invisux
+            curl -Lo Invisux-bin https://codeberg.org/JasperC/Invisux/releases/download/v1.1/Invisux
             install
             dir=$(pwd)
-            sudo chmod +x "$dir/Invisux"
-            sudo cp "$dir/invisux" /usr/local/bin/invisux
+            sudo chmod +x "$dir/Invisux-bin"
+            sudo cp "$dir/Invisux-bin" /usr/local/bin/invisux
             ;;
             V1.2)
-            curl -LO https://codeberg.org/JasperC/Invisux/releases/download/v1.2/Invisux
+            curl -Lo Invisux-bin https://codeberg.org/JasperC/Invisux/releases/download/v1.2/Invisux
             install
             dir=$(pwd)
-            sudo chmod +x "$dir/Invisux"
-            sudo cp "$dir/invisux" /usr/local/bin/invisux
+            sudo chmod +x "$dir/Invisux-bin"
+            sudo cp "$dir/Invisux-bin" /usr/local/bin/invisux
             ;;
             *)
                 return 0
