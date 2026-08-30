@@ -2382,7 +2382,7 @@ elif [[ $1 == "random-data" ]]; then
 elif [[ $1 == "check-hash" ]]; then
     if [[ -z $2 ]]; then
         check-hash
-    elif [[ $2 =="-c" ]]; then
+    elif [[ $2 == "-c" ]]; then
         check-hash--C
     else
         echo "Unknown option: $2"
