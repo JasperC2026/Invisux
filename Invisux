@@ -1054,6 +1054,7 @@ check-hash--c() {
         sha256sum $3
     elif [[ $4 == "sha1" ]]; then
         sha1sum $3
+    fi
 }
 
 keys() {
