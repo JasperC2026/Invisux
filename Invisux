@@ -2393,7 +2393,6 @@ invisux check-hash / invisux check-hash -c {file} {protocol}
 Protocols are: md5, sha256, sha1
 EOF
     fi
-    fi
 else
     echo "Unknown command:  $1"
 fi 
