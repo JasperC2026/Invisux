@@ -94,7 +94,6 @@ RESET="\e[0m"
 
 # Privacy
 privacy_menu() {
-    echo
     gum_privacy_menu=$(gum choose "Hide file(s)" "Random data" "Network" "View metadata" "Remove metadata" "[↩] Return" "➜] Exit")
 
     case $gum_privacy_menu in
@@ -470,7 +469,6 @@ view_metadata() {
 
 # Security
 security_menu() {
-    echo
     gum_security_menu=$(gum choose "Generate a password" "Audit system" "Empty trash" "Delete a file" "Wipe a drive" "Update apps" "Check hash" "[↩] Return" "➜] Exit")
 
     case $gum_security_menu in
@@ -917,7 +915,6 @@ update-apps() {
 
 # Encryption
 encryption_menu() {
-    echo
     gum_encryption_menu=$(gum choose Hash General-keys AES GPG "[↩] Return" "➜] Exit")
     
     case $gum_encryption_menu in
@@ -1766,7 +1763,6 @@ EOF
 }
 
 license_menu() {
-    echo
     gum_license_menu=$(gum choose "Full license" "TL;DR" "License name" "[↩] Return" "➜] Exit")
 
     case $gum_license_menu in
@@ -1787,15 +1783,13 @@ license_menu() {
             ;;
     esac
 }
+
 full-license() {
     curl https://codeberg.org/JasperC/Invisux/raw/branch/main/LICENSE
-
-    status=$?
-    error_check
 }
 license_overview() {
+echo -e "${BOLD}Licensed under GPL-3.0 ${RESET}" 
     cat << EOF
-Licensed under GPL-3.0 
 You are free to use, copy, modify, and distribute this software for any purpose. With the requirements of: keeping the source code open and availible, license any modified or derived versions under GPL-3.0 as well and keeping all copyright and license notices intact. You cannot distribute it as closed-source / proprietary, add restrictions that prevent others from exercising these rights, hold the author (JasperC) liable for anything — the software comes with no warranty.
 EOF
 }
