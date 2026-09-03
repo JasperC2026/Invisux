@@ -502,6 +502,55 @@ security_menu() {
     esac
 }
 
+secure_copy() {
+    echo "Copy file from or to local?"
+    local destination=$(gum choose From To)
+
+    case $destination in
+        From)
+        from_secure_copy
+        ;;
+        To)
+        to_secure_copy
+        ;;
+    esac
+}
+
+from_secure_copy() {
+    echo "Enter path/to/file"
+    local file=$(gum input)
+
+    echo "Enter remote user and host (user@host)"
+    local host=$(gum input)
+
+    echo "Enter path/to/destination"
+    local path=$(gum input)
+
+    if [[ -z $path ]];
+        return 0
+    elif [[ -z $host ]];
+        return 0
+    elif [[ -z $file ]];
+        return 0
+    fi
+
+    scp $host:$file $path
+}
+
+to_secure_copy() {
+    echo "File or directory?"
+    local choice=$(gum choose File Directory)
+
+    case $choice in 
+        File)
+            echo "Work in progress"
+        ;;
+        Directory)
+            echo "Work in progress"
+        ;;
+    esac
+}
+
 wipe-drive() {
     echo "This command will compeltely wipe a selected drive securely, the data will become unrecoverable."
     echo "Sure you wanna continue?"
