@@ -5,7 +5,7 @@
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-set -euo pipefail
+set -e
 
 # Shared commands
 BLA_classic_utf8=( 0.25 '—' '\\' '|' '/' )
@@ -525,14 +525,6 @@ from_secure_copy() {
 
     echo "Enter path/to/destination"
     local path=$(gum input)
-
-    if [[ -z $path ]];
-        return 0
-    elif [[ -z $host ]];
-        return 0
-    elif [[ -z $file ]];
-        return 0
-    fi
 
     scp $host:$file $path
 }
