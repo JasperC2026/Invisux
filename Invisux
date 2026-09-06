@@ -524,9 +524,26 @@ from_secure_copy() {
     local host=$(gum input)
 
     echo "Enter path/to/destination"
-    local path=$(gum input)
+    local destination=$(gum input)
 
-    scp $host:$file $path
+    if [[ -z $file ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $host ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $destination ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    scp $host:$file $destination
+
+    status=$?
+    error_check
 }
 
 to_secure_copy() {
@@ -535,12 +552,90 @@ to_secure_copy() {
 
     case $choice in 
         File)
-            echo "Work in progress"
+            echo "Do you wish to use special options? (SSH port / SSH key / Compression / Remote to Remote)"
+            local options=$(gum choose Yes No)
+
+            case $options in 
+                Yes)
+                    echo "Which option do you want?"
+                    local special=$(gum choose "Specific SSH port" "Specific identity file" "Compression enabled" "Remote to another remote")
+
+                    case $special in
+                        "Specific SSH port")
+                        ;;
+                        "Specific identity file")
+                        ;;
+                        "Compression enabled")
+                        ;;
+                        "Remote to another remote")
+                        ;;
+            esac
         ;;
-        Directory)
-            echo "Work in progress"
+        No)
+        normal_to_secure_copy
         ;;
     esac
+        ;;
+        Directory)
+            echo "Enter path/to/directory"
+            local dir=$(gum input)
+
+            echo "Enter user@host"
+            local host=$(gum input)
+
+            echo "Enter path/to/destination"
+            local destination=$(gum input)
+
+            if [[ -z $dir ]]; then
+                status=5
+                error_check
+                return 0
+            elif [[ -z $host ]]; then
+                status=5
+                error_check
+                return 0
+            elif [[ -z $destination ]]; then
+                status=5
+                error_check
+                return 0
+            fi        
+
+            scp -r $dir $host:$destination
+
+            status=$?
+            error_check
+        ;;
+    esac
+}
+
+normal_to_secure_copy() {
+    echo "Enter path/to/file"
+    local file=$(gum input)
+
+    echo "Enter remote user and host (user@host)"
+    local host=$(gum input)
+
+    echo "Enter path/to/destination"
+    local destination=$(gum input)
+
+    if [[ -z $file ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $host ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $destination ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    scp $file $host:$destination
+
+    status=$?
+    error_check
 }
 
 wipe-drive() {
