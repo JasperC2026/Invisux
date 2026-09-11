@@ -546,6 +546,113 @@ from_secure_copy() {
     error_check
 }
 
+ssh_secure_copy() {
+    echo "Enter port"
+    local port=$(gum input)
+
+    echo "Enter path/to/file"
+    local file=$(gum input)
+
+    echo "Enter remote user and host (user@host)"
+    local host=$(gum input)
+
+    echo "Enter path/to/destination"
+    local destination=$(gum input)
+
+    if [[ -z $port ]]; then
+        status=5
+        error_check
+        return 0
+    if [[ -z $file ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $host ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $destination ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    scp -P $port $file $host:$destination
+
+    status=$?
+    error_check
+}
+
+identity_secure_copy() {
+    echo "Enter identity file (~/.ssh/id_rsa)"
+    local identity=$(gum input)
+
+    echo "Enter path/to/file"
+    local file=$(gum input)
+
+    echo "Enter remote user and host (user@host)"
+    local host=$(gum input)
+
+    echo "Enter path/to/destination"
+    local destination=$(gum input)
+
+    if [[ -z $identity ]]; then
+        status=5
+        error_check
+        return 0
+    if [[ -z $file ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $host ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $destination ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    scp -i $identity $file $host:$destination
+
+    status=$?
+    error_check
+}
+
+compression_secure_copy() {
+    echo "Enter path/to/file"
+    local file=$(gum input)
+
+    echo "Enter remote user and host (user@host)"
+    local host=$(gum input)
+
+    echo "Enter path/to/destination"
+    local destination=$(gum input)
+
+    if [[ -z $file ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $host ]]; then
+        status=5
+        error_check
+        return 0
+    elif [[ -z $destination ]]; then
+        status=5
+        error_check
+        return 0
+    fi
+
+    scp -C $file $host:$destination
+
+    status=$?
+    error_check
+}
+
+transfer_secure_copy() {
+}
+
 to_secure_copy() {
     echo "File or directory?"
     local choice=$(gum choose File Directory)
@@ -562,12 +669,16 @@ to_secure_copy() {
 
                     case $special in
                         "Specific SSH port")
+                        ssh_secure_copy
                         ;;
                         "Specific identity file")
+                        identity_secure_copy
                         ;;
                         "Compression enabled")
+                        compression_secure_copy
                         ;;
                         "Remote to another remote")
+                        transfer_secure_copy
                         ;;
             esac
         ;;
