@@ -838,16 +838,20 @@ empty_trash() {
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         animation_begin
 
-        # Shred files: 3 passes, zero out on final pass, then remove
+        # Shred files (regular files) — 3 passes, zero on final pass, remove
         find "$TRASH_FILES" -type f -print0 2>/dev/null \
-            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+        | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
 
-        # Remove leftover empty directories
-        find "$TRASH_FILES" -mindepth 1 -depth -type d -empty -delete 2>/dev/null
+        # Remove symlinks and other non-regular files 
+        find "$TRASH_FILES" \( -type l -o -type p -o -type s \) -print0 2>/dev/null \
+        | xargs -0 -r rm -f 2>/dev/null
 
-        # Shred and remove the corresponding .trashinfo metadata files
+        # Remove the leftover directory tree
+        rm -rf -- "$TRASH_FILES"/*/
+
+        # Shred and remove the .trashinfo metadata files
         find "$TRASH_INFO" -type f -print0 2>/dev/null \
-            | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
+        | xargs -0 -r shred -z -n 3 --remove 2>/dev/null
 
         animation_end
     else
