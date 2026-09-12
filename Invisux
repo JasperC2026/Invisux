@@ -563,7 +563,7 @@ ssh_secure_copy() {
         status=5
         error_check
         return 0
-    if [[ -z $file ]]; then
+    elif [[ -z $file ]]; then
         status=5
         error_check
         return 0
@@ -600,7 +600,7 @@ identity_secure_copy() {
         status=5
         error_check
         return 0
-    if [[ -z $file ]]; then
+    elif [[ -z $file ]]; then
         status=5
         error_check
         return 0
@@ -651,6 +651,7 @@ compression_secure_copy() {
 }
 
 transfer_secure_copy() {
+    echo "Upcoming"
 }
 
 to_secure_copy() {
