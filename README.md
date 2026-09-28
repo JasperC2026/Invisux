@@ -120,10 +120,6 @@ Invisux requires **Gum** to run. All other dependencies are optional and are onl
 1.1: 6fd0653b1777a13a931eb2678991e9350a6e643bc104c0e87a2ebffaad9895da  Invisux
 1.2: 125f46938c1e339cfcc4d3f1b334a8c07ccbf435834b2e1de33933a6a840abf8  Invisux
 
-## Thanks
-
-Thanks to [bash_loading_animations](https://github.com/Silejonu/bash_loading_animations) for the loading animation used, and to the creators of all the dependencies that power this tool.
-
 ---
 
 ## Contributing
