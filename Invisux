@@ -12,12 +12,14 @@ dependencie_checker() {
     if ! command -v $dependencie >/dev/null 2>&1; then
         echo "$dependencie not installed"
         echo "Install $dependencie?"
-        local answer=$(gum choose yes no)
+        local answer
+        answer=$(gum choose yes no)
 
         case $answer in
             yes)
             echo "Choose package manager:   "
-            local package_manager=$(gum choose apt dnf pacman)
+            local package_manager
+            package_manager=$(gum choose apt dnf pacman)
             
             case $package_manager in
                 apt)
@@ -93,7 +95,8 @@ hide_files() {
 
 hide_dot() {
     echo "Enter file to hide"
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         status=5
@@ -101,18 +104,18 @@ hide_dot() {
         return 0
     fi
 
-    mv "$file" ."$file"
+    mv "$file" "$(dirname -- "$file")/.$(basename -- "$file")"
 
     status=$?
     error_check
 }
 
 hide_dot--c() {
-    if [[ -z $4 ]]; then
+    if [[ -z $3 ]]; then
         return 0
     fi
 
-    mv "$4" ."$4"
+    mv "$3" "$(dirname -- "$3")/.$(basename -- "$3")"
 }
 
 concatenation() {
@@ -120,32 +123,36 @@ concatenation() {
     dependencie_checker
 
     echo "Enter file to hide"
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         status=5
         error_check
         return 0
     fi
-
-    zip=$(zip "$file")
 
     echo "Enter JPG image to hide the file in"
-    local jpg=$(gum file)
+    local jpg
+    jpg=$(gum file)
 
-    if [[ "$file" == "no file selected" ]]; then
+    if [[ "$jpg" == "no file selected" ]]; then
         status=5
         error_check
         return 0
     fi
 
-    cat "$jpg" "$zip" > "$jpg"
+    local tmp
+    tmp="$(mktemp -u).zip"
+    zip -j "$tmp" "$file"
+    cat "$tmp" >> "$jpg"
+    rm -f "$tmp"
 
     status=$?
     error_check
 }
 
-concatenation() {
+concatenation--c() {
     if [[ -z $3 ]]; then
         return 0
     fi
@@ -154,9 +161,11 @@ concatenation() {
         return 0
     fi
 
-    zip=$(zip "$3")
-
-    cat "$4" "$zip" > "$4"
+    local tmp
+    tmp="$(mktemp -u).zip"
+    zip -j "$tmp" "$3"
+    cat "$tmp" >> "$4"
+    rm -f "$tmp"
 }
 
 steganography() {
@@ -167,7 +176,8 @@ steganography() {
             dependencie_checker
 
             echo "Enter file to hide"
-            local file=$(gum file)
+            local file
+            file=$(gum file)
 
             if [[ "$file" == "no file selected" ]]; then
                 status=5
@@ -176,16 +186,18 @@ steganography() {
             fi
 
             echo "Enter JPG image to hide the file in"
-            local jpg=$(gum file)
+            local jpg
+            jpg=$(gum file)
 
-            if [[ "$file" == "no file selected" ]]; then
+            if [[ "$jpg" == "no file selected" ]]; then
                 status=5
                 error_check
                 return 0
             fi
 
             echo "Enter password to encrypt with:   "
-            local password=$(gum input --placeholder "Password")
+            local password
+            password=$(gum input --placeholder "Password")
 
             if [[ -z "$password" ]]; then
                 status=5
@@ -195,17 +207,19 @@ steganography() {
 
             echo "Want to save it to a file?"
 
-            local saving_to_file=$(gum choose yes no)
+            local saving_to_file
+            saving_to_file=$(gum choose yes no)
 
             case $saving_to_file in
                 yes)
-                read -p "Enter file name:   " file
-                echo -n "$password" >> "$file"
+                read -rp "Enter file name:   " pw_file
+                echo -n "$password" >> "$pw_file"
                 ;;
             esac
 
-            steghide embed -cf "$jpg" -ef "$file" "$password"
+            steghide embed -cf "$jpg" -ef "$file" -p "$password"
 
+            status=$?
             error_check
         ;;
         Extract)
@@ -213,7 +227,8 @@ steganography() {
             dependencie_checker
 
             echo "Enter file it is hidden in:   "
-            local file=$(gum file)
+            local file
+            file=$(gum file)
 
             if [[ "$file" == "no file selected" ]]; then
                 status=5
@@ -222,7 +237,8 @@ steganography() {
             fi
 
             echo "Enter password to decrypt with:   "
-            local password=$(gum input --placeholder "Password")
+            local password
+            password=$(gum input --placeholder "Password")
 
             if [[ -z "$password" ]]; then
                 status=5
@@ -230,7 +246,7 @@ steganography() {
                 return 0
             fi
 
-            steghide extract -sf "$file" "$password"
+            steghide extract -sf "$file" -p "$password"
             
             status=$?
             error_check
@@ -238,7 +254,7 @@ steganography() {
     esac
 }
 
-steganograph--e() {
+steganography--e() {
     if [[ -z $3 ]]; then
         return 0
     fi
@@ -251,10 +267,10 @@ steganograph--e() {
         return 0
     fi
 
-    steghide embed -cf "$jpg" -ef "$3" "$5"
+    steghide embed -cf "$4" -ef "$3" -p "$5"
 }
 
-steganograph--d() {
+steganography--d() {
     if [[ -z $3 ]]; then
         return 0
     fi
@@ -263,7 +279,7 @@ steganograph--d() {
         return 0
     fi
 
-    steghide extract -sf "$3" "$4"
+    steghide extract -sf "$3" -p "$4"
 }
 
 random_data() {
@@ -275,14 +291,15 @@ random_data() {
         dependencie_checker
 
         name=$(faker name)
+        status=$?
         echo -e "${BOLD} $name ${RESET}"
 
-        status=$?
         error_check
         ;;
         "String")
         echo "Select size:  "
-        local numbers=$(gum input --placeholder "Total numbers of characters")
+        local numbers
+        numbers=$(gum input --placeholder "Total numbers of characters")
 
         if [[ -z "$numbers" ]]; then
             status=5
@@ -378,9 +395,15 @@ dns_conf() {
 }
 
 rand_mac() {
-    sudo ip link set eth0 down
-    sudo ip link set eth0 address $(xxd -c1 -l6 /dev/urandom | tr -dc '[:xdigit:]' | head -c17)
-    sudo ip link set eth0 up
+    local iface mac
+    iface=$(ip route show default | awk '/default/ {print $5; exit}')
+    iface=${iface:-eth0}
+    # 02 = locally administered, unicast
+    mac=$(hexdump -n5 -e '"02:%02x:%02x:%02x:%02x:%02x"' /dev/urandom)
+
+    sudo ip link set "$iface" down
+    sudo ip link set "$iface" address "$mac"
+    sudo ip link set "$iface" up
 
     status=$?
     error_check
@@ -406,7 +429,8 @@ view_metadata() {
     dependencie_checker
 
     echo "Select a file:    "
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
@@ -458,7 +482,8 @@ security_menu() {
 
 secure_copy() {
     echo "Copy file from or to local?"
-    local destination=$(gum choose From To)
+    local destination
+    destination=$(gum choose From To)
 
     case $destination in
         From)
@@ -472,13 +497,16 @@ secure_copy() {
 
 from_secure_copy() {
     echo "Enter path/to/file"
-    local file=$(gum input)
+    local file
+    file=$(gum input)
 
     echo "Enter remote user and host (user@host)"
-    local host=$(gum input)
+    local host
+    host=$(gum input)
 
     echo "Enter path/to/destination"
-    local destination=$(gum input)
+    local destination
+    destination=$(gum input)
 
     if [[ -z $file ]]; then
         status=5
@@ -502,16 +530,20 @@ from_secure_copy() {
 
 ssh_secure_copy() {
     echo "Enter port"
-    local port=$(gum input)
+    local port
+    port=$(gum input)
 
     echo "Enter path/to/file"
-    local file=$(gum input)
+    local file
+    file=$(gum input)
 
     echo "Enter remote user and host (user@host)"
-    local host=$(gum input)
+    local host
+    host=$(gum input)
 
     echo "Enter path/to/destination"
-    local destination=$(gum input)
+    local destination
+    destination=$(gum input)
 
     if [[ -z $port ]]; then
         status=5
@@ -539,16 +571,20 @@ ssh_secure_copy() {
 
 identity_secure_copy() {
     echo "Enter identity file (~/.ssh/id_rsa)"
-    local identity=$(gum input)
+    local identity
+    identity=$(gum input)
 
     echo "Enter path/to/file"
-    local file=$(gum input)
+    local file
+    file=$(gum input)
 
     echo "Enter remote user and host (user@host)"
-    local host=$(gum input)
+    local host
+    host=$(gum input)
 
     echo "Enter path/to/destination"
-    local destination=$(gum input)
+    local destination
+    destination=$(gum input)
 
     if [[ -z $identity ]]; then
         status=5
@@ -576,13 +612,16 @@ identity_secure_copy() {
 
 compression_secure_copy() {
     echo "Enter path/to/file"
-    local file=$(gum input)
+    local file
+    file=$(gum input)
 
     echo "Enter remote user and host (user@host)"
-    local host=$(gum input)
+    local host
+    host=$(gum input)
 
     echo "Enter path/to/destination"
-    local destination=$(gum input)
+    local destination
+    destination=$(gum input)
 
     if [[ -z $file ]]; then
         status=5
@@ -610,17 +649,20 @@ transfer_secure_copy() {
 
 to_secure_copy() {
     echo "File or directory?"
-    local choice=$(gum choose File Directory)
+    local choice
+    choice=$(gum choose File Directory)
 
     case $choice in 
         File)
             echo "Do you wish to use special options? (SSH port / SSH key / Compression / Remote to Remote)"
-            local options=$(gum choose Yes No)
+            local options
+            options=$(gum choose Yes No)
 
             case $options in 
                 Yes)
                     echo "Which option do you want?"
-                    local special=$(gum choose "Specific SSH port" "Specific identity file" "Compression enabled" "Remote to another remote")
+                    local special
+                    special=$(gum choose "Specific SSH port" "Specific identity file" "Compression enabled" "Remote to another remote")
 
                     case $special in
                         "Specific SSH port")
@@ -644,13 +686,16 @@ to_secure_copy() {
         ;;
         Directory)
             echo "Enter path/to/directory"
-            local dir=$(gum input)
+            local dir
+            dir=$(gum input)
 
             echo "Enter user@host"
-            local host=$(gum input)
+            local host
+            host=$(gum input)
 
             echo "Enter path/to/destination"
-            local destination=$(gum input)
+            local destination
+            destination=$(gum input)
 
             if [[ -z $dir ]]; then
                 status=5
@@ -676,13 +721,16 @@ to_secure_copy() {
 
 normal_to_secure_copy() {
     echo "Enter path/to/file"
-    local file=$(gum input)
+    local file
+    file=$(gum input)
 
     echo "Enter remote user and host (user@host)"
-    local host=$(gum input)
+    local host
+    host=$(gum input)
 
     echo "Enter path/to/destination"
-    local destination=$(gum input)
+    local destination
+    destination=$(gum input)
 
     if [[ -z $file ]]; then
         status=5
@@ -712,7 +760,8 @@ wipe-drive() {
 
 wipe-continue() {
     echo "All USB drives:   "
-    local drives=$(lsblk | grep sda)
+    local drives
+    drives=$(lsblk | grep sda)
 
     if [[ -z "$drives" ]]; then
         echo "No USB drives are in your system" >&2
@@ -722,7 +771,8 @@ wipe-continue() {
     fi
 
     echo "Select a drive"
-    local drive=$(gum input --placeholder "Drive")
+    local drive
+    drive=$(gum input --placeholder "Drive")
 
     if [[ -z "$drive" ]]; then
         status=5
@@ -730,7 +780,8 @@ wipe-continue() {
         return 0
     fi
 
-    local selected=$(echo "$drive" | grep sda)
+    local selected
+    selected=$(echo "$drive" | grep sda)
 
     if [[ -z "$selected" ]]; then
         echo "Selected drive is NOT an USB" >&2
@@ -748,7 +799,8 @@ wipe-continue() {
 wipe-drive--c() {
     drive=$3
 
-    local drives=$(lsblk | grep sda)
+    local drives
+    drives=$(lsblk | grep sda)
 
     if [[ -z "$drives" ]]; then
         status=7
@@ -762,7 +814,8 @@ wipe-drive--c() {
         return 0
     fi
 
-    local selected=$(echo "$3" | grep sda)
+    local selected
+    selected=$(echo "$3" | grep sda)
 
     if [[ -z "$selected" ]]; then
         return 0
@@ -780,7 +833,8 @@ generate-passwd() {
 
     echo "Password length: (between 8 and 128)"
 
-    local length=$(gum input --placeholder "Password length")
+    local length
+    length=$(gum input --placeholder "Password length")
     local length=${length:-16}
 
     if [[ ! "$length" =~ ^[0-9]+$ ]]; then
@@ -790,7 +844,7 @@ generate-passwd() {
         return 0
     fi
 
-    if [ "$length" -ge 7 ] && [ "$length" -le 129 ]; then
+    if [ "$length" -ge 8 ] && [ "$length" -le 128 ]; then
         echo "You selected $length as your lenght size"
     else
         echo "You selected a lenght not supported"
@@ -822,7 +876,7 @@ generate-passwd() {
 
     echo -e "[i] Estimated entropy — alphanumeric: ~${entropy_alnum} bits  |  with symbols: ~${entropy_full} bits${RESET}"
 
-    status=$?
+    status=0
     error_check
 }
 
@@ -830,31 +884,22 @@ generate-passwd--c() {
     local dependencie=openssl
     dependencie_checker
 
-    if [[ -z $3 ]]; then
-        status=5
+    local length="${3:-16}"
+
+    if [[ ! "$length" =~ ^[0-9]+$ ]] || (( length < 8 || length > 128 )); then
+        status=4
         error_check
-        return 0
-    fi
-
-    local length=$(gum input --placeholder "Password length")
-    local length=${length:-16}
-
-    if [[ ! "$length" =~ ^[0-9]+$ ]]; then
-        return 0
-    fi
-
-    if [ ! "$length" -ge 7 ] && [ "$length" -le 129 ]; then
         return 0
     fi
 
     local pass_alnum
     pass_alnum=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9' | head -c "$length")
-    
+
     echo -e "  Alphanumeric : ${pass_alnum}${RESET}"
 
     local pass_full
     pass_full=$(openssl rand -base64 96 | tr -dc 'A-Za-z0-9!@#$%^&*()-_=+[]{}|;:,.<>?' | head -c "$length")
-    
+
     echo -e "  With symbols : ${pass_full}${RESET}"
 
     local pass_hex
@@ -862,13 +907,7 @@ generate-passwd--c() {
 
     echo -e "  Hex          : ${pass_hex}${RESET}"
 
-    echo
-
-    local entropy_alnum entropy_full
-    entropy_alnum=$(awk "BEGIN { printf \"%d\", $length * 5.954 }")
-    entropy_full=$(awk  "BEGIN { printf \"%d\", $length * 6.554 }")
-
-    status=$?
+    status=0
     error_check
 }
 
@@ -911,7 +950,7 @@ empty_trash() {
         | xargs -0 -r rm -f 2>/dev/null
 
         # Remove the leftover directory tree
-        rm -rf -- "$TRASH_FILES"/*/
+        rm -rf -- "${TRASH_FILES:?}"/*/
 
         # Shred and remove the .trashinfo metadata files
         find "$TRASH_INFO" -type f -print0 2>/dev/null \
@@ -934,11 +973,11 @@ empty_trash() {
         error_check
         
         echo "Want to retry?"
-        gum confirm && invisux empty_trash
+        gum confirm && empty_trash
         return 0
     fi
 
-    status=$?
+    status=0
     error_check
 }
 
@@ -958,7 +997,7 @@ empty_trash--s() {
     | xargs -0 -r rm -f 2>/dev/null
 
     # Remove the leftover directory tree
-    rm -rf -- "$TRASH_FILES"/*/
+    rm -rf -- "${TRASH_FILES:?}"/*/
 
     # Shred and remove the .trashinfo metadata files
     find "$TRASH_INFO" -type f -print0 2>/dev/null \
@@ -974,7 +1013,8 @@ delete-file() {
 
     echo "Select a file to be removed:  "
 
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
@@ -984,7 +1024,8 @@ delete-file() {
     fi
 
     echo "Are you sure to remove $file?"
-    local confirm=$(gum choose yes no)
+    local confirm
+    confirm=$(gum choose yes no)
 
     case $confirm in
         no)
@@ -1024,7 +1065,8 @@ remove_metadata() {
     dependencie_checker
 
     echo "Select a file:    "
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         echo "No file was selected"
@@ -1056,10 +1098,12 @@ remove_metadata--c() {
 }
 
 update-apps() {
-    local options=$(gum choose --no-limit APT Flatpak Snap Pacman DNF Yum Zypper)
+    local options
+    options=$(gum choose --no-limit APT Flatpak Snap Pacman DNF Yum Zypper)
 
     echo "Are you sure?"
-    local confirm=$(gum choose yes no)
+    local confirm
+    confirm=$(gum choose yes no)
 
     case $confirm in
         no)
@@ -1148,7 +1192,8 @@ hash-passwd() {
     dependencie_checker
 
     echo "Choose a password to hash"
-    local hash=$(gum input --placeholder "Password" )
+    local hash
+    hash=$(gum input --placeholder "Password" )
 
     if [[ -z "$hash" ]]; then
         echo "No input provided" >&2
@@ -1158,23 +1203,29 @@ hash-passwd() {
     fi
 
     echo "Choose a protocol:    "
-    local protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
+    local protocol
+    protocol=$(gum choose MD5 SHA256 SHA512 APR1 AIX)
 
     case $protocol in
         MD5)
-        local output=$(openssl passwd -1 "$hash")
+        local output
+        output=$(openssl passwd -1 "$hash")
         ;;
         SHA256)
-        local output=$(openssl passwd -5 "$hash")
+        local output
+        output=$(openssl passwd -5 "$hash")
         ;;
         SHA512)
-        local output=$(openssl passwd -6 "$hash")
+        local output
+        output=$(openssl passwd -6 "$hash")
         ;;
         APR1)
-        local output=$(openssl passwd -apr1 "$hash")
+        local output
+        output=$(openssl passwd -apr1 "$hash")
         ;;
         AIX)
-        local output=$(openssl passwd -aixmd5 "$hash")
+        local output
+        output=$(openssl passwd -aixmd5 "$hash")
         ;;
     esac
 
@@ -1182,7 +1233,7 @@ hash-passwd() {
     echo "Your hashed password is: $output"
     echo "Hashed with: $protocol"
 
-    status=$?
+    status=0
     error_check
 }
 
@@ -1212,7 +1263,8 @@ hash-passwd--c() {
 
 check-hash() {
     echo "What file do you want to check?"
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ -z $file ]]; then 
         echo "No input provided" >&2
@@ -1222,7 +1274,8 @@ check-hash() {
     fi
 
     echo "What protocol is the checksum of?"
-    local protocol=$(gum choose SHA256 SHA1 MD5)
+    local protocol
+    protocol=$(gum choose SHA256 SHA1 MD5)
 
     case $protocol in
         SHA256)
@@ -1230,7 +1283,7 @@ check-hash() {
         SHA1)
         sha1sum "$file" ;;
         MD5)
-        md5shum "$file" ;;
+        md5sum "$file" ;;
     esac
 
     status=$?
@@ -1263,7 +1316,8 @@ keys() {
     local dependencie=openssl
     dependencie_checker
 
-    local key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit )
+    local key_size
+    key_size=$(gum choose 128-bit 192-bit 256-bit 512-bit )
     echo "You selected $key_size as your key size"
 
     case $key_size in
@@ -1284,11 +1338,12 @@ keys() {
     echo "Here is your key: $key"
     echo "Want to save it to a file?"
 
-    local saving_to_file=$(gum choose yes no)
+    local saving_to_file
+    saving_to_file=$(gum choose yes no)
 
     case $saving_to_file in
         yes)
-        read -p "Enter file name:   " file
+        read -rp "Enter file name:   " file
         echo -n "$key" >> "$file"
         ;;
         no)
@@ -1375,12 +1430,14 @@ encrypt_128() {
     local dependencie=openssl
     dependencie_checker
 
-    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+    local text_or_file
+    text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
         echo "Enter file:   "
-        local file=$(gum file)
+        local file
+        file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
             status=5
@@ -1388,14 +1445,15 @@ encrypt_128() {
             return 0
         fi
         
-        read -p "Enter file to write to (no extension added):    " output_file
+        read -rp "Enter file to write to (no extension added):    " output_file
 
         openssl enc -aes-128-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
 
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        local ddelete_choice=$(gum choose yes no)
+        local ddelete_choice
+        ddelete_choice=$(gum choose yes no)
         case $ddelete_choice in
             yes)
                 shred -u -- "$file"
@@ -1406,7 +1464,8 @@ encrypt_128() {
         esac
         ;;
         text)
-        local text=$(gum write)
+        local text
+        text=$(gum write)
 
         if [[ -z "$text" ]]; then
             status=5
@@ -1464,12 +1523,14 @@ encrypt_256() {
     local dependencie=openssl
     dependencie_checker
 
-    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+    local text_or_file
+    text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
         echo "Enter file:   "
-        local file=$(gum file)
+        local file
+        file=$(gum file)
 
         if [[ "$file" == "no file selected" ]]; then
             status=5
@@ -1477,14 +1538,15 @@ encrypt_256() {
             return 0
         fi
 
-        read -p "Enter file to write to (no extension added):    " output_file
+        read -rp "Enter file to write to (no extension added):    " output_file
 
         openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -salt -in "$file" -out "$output_file.aes"
 
         echo "Encrypted file:   $output_file.aes" 
 
         echo "Delete original unencrypted file?"
-        local ddelete_choice=$(gum choose yes no)
+        local ddelete_choice
+        ddelete_choice=$(gum choose yes no)
         case $ddelete_choice in
             yes)
                 shred -u -- "$file"
@@ -1495,7 +1557,8 @@ encrypt_256() {
         esac
         ;;
         text)
-        local text=$(gum write)
+        local text
+        text=$(gum write)
 
         if [[ -z "$text" ]]; then
             status=5
@@ -1552,7 +1615,8 @@ decrypt_128() {
     local dependencie=openssl
     dependencie_checker
 
-    local text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
+    local text_or_file
+    text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -1565,15 +1629,16 @@ decrypt_128() {
             return 0
         fi
 
-        read -p "Enter file to write to (no extension added):    " output_file
+        read -rp "Enter file to write to (no extension added):    " output_file
 
         openssl enc -aes-128-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.txt"
 
-        echo "Unencrypted file:   $output_file.aes" 
+        echo "Unencrypted file:   $output_file.txt" 
 
         echo "Delete original encrypted file?"
-        local delete_choice=$(gum choose yes no)
-        case $ddelete_choice in
+        local delete_choice
+        delete_choice=$(gum choose yes no)
+        case $delete_choice in
             yes)
                 shred -u -- "$file"
             ;;
@@ -1583,7 +1648,8 @@ decrypt_128() {
         esac
         ;;
         text)
-        local text=$(gum write)
+        local text
+        text=$(gum write)
 
         if [[ -z "$text" ]]; then
             status=5
@@ -1640,7 +1706,8 @@ decrypt_256() {
     local dependencie=openssl
     dependencie_checker
 
-    local text_or_file=$(gum choose file text return "[↩] Return" "➜] Exit")
+    local text_or_file
+    text_or_file=$(gum choose file text "[↩] Return" "➜] Exit")
 
     case $text_or_file in
         file)
@@ -1653,14 +1720,15 @@ decrypt_256() {
             return 0
         fi
 
-        read -p "Enter file to write to (no extension added):    " output_file
+        read -rp "Enter file to write to (no extension added):    " output_file
 
-        openssl enc -aes-256-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.text"
+        openssl enc -aes-256-cbc -pbkdf2 -d -iter 100000 -salt -in "$file" -out "$output_file.txt"
 
-        echo "Unencrypted file:   $output_file.aes" 
+        echo "Unencrypted file:   $output_file.txt" 
 
         echo "Delete original encrypted file?"
-        local ddelete_choice=$(gum choose yes no)
+        local ddelete_choice
+        ddelete_choice=$(gum choose yes no)
         case $ddelete_choice in
             yes)
                 shred -u -- "$file"
@@ -1671,7 +1739,8 @@ decrypt_256() {
         esac
         ;;
         text)
-        local text=$(gum write)
+        local text
+        text=$(gum write)
 
         if [[ -z "$text" ]]; then
             status=5
@@ -1754,7 +1823,7 @@ gpg_menu() {
             verify
         ;;
         "[↩] Return")
-            gum_encryption_menu
+            encryption_menu
         ;;
         "➜] Exit")
             return 0
@@ -1776,10 +1845,11 @@ delete-key() {
     local dependencie=gpg
     dependencie_checker
 
-    read -p "Username:  " username
+    read -rp "Username:  " username
 
     echo "Enter kind of key:    "
-    local answer=$(gum choose public private)
+    local answer
+    answer=$(gum choose public private)
 
     case $answer in
         public)
@@ -1799,12 +1869,13 @@ import-key() {
     dependencie_checker
 
     echo "Select a file:    "
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         status=5
         error_check
-        eturn 0
+        return 0
     fi
 
     gpg --import "$file"
@@ -1833,8 +1904,8 @@ export-key() {
     local dependencie=gpg
     dependencie_checker
 
-    read -p "Enter your username:   " username
-    read -p "Enter file to write to (no extension added):    " file
+    read -rp "Enter your username:   " username
+    read -rp "Enter file to write to (no extension added):    " file
 
     gpg --export -a "$username" "$file".key
 
@@ -1882,12 +1953,13 @@ sign() {
     dependencie_checker
 
     echo "Select a file:    "
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         status=5
         error_check
-        eturn 0
+        return 0
     fi
 
     gpg --sign "$file"
@@ -1917,12 +1989,13 @@ verify() {
     dependencie_checker
 
     echo "Select a file:    "
-    local file=$(gum file)
+    local file
+    file=$(gum file)
 
     if [[ "$file" == "no file selected" ]]; then
         status=5
         error_check
-        eturn 0
+        return 0
     fi
 
 	gpg --verify "$file"
@@ -2187,9 +2260,9 @@ elif [[ $1 == "license" ]]; then
         echo "Unknown option: $2"
     fi
 elif [[ $1 == "-l" ]]; then
-    license
+    full-license
 elif [[ $1 == "--license" ]]; then
-    license
+    full-license
 elif [[ $1 == "info" ]]; then
     info
 elif [[ $1 == "-i" ]]; then
@@ -2210,7 +2283,7 @@ elif [[ $1 == "import-key" ]]; then
     if [[ -z $2 ]]; then
         import-key
     elif [[ $2 == "-c" ]]; then
-        import-key--c
+        import-key--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2222,7 +2295,7 @@ elif [[ $1 == "export-key" ]]; then
     if [[ -z $2 ]]; then
         export-key
     elif [[ $2 == "-c" ]]; then
-        export-key--c
+        export-key--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2236,7 +2309,7 @@ elif [[ $1 == "sign" ]]; then
     if [[ -z $2 ]]; then
         sign
     elif [[ $2 == "-c" ]]; then
-        sign--c
+        sign--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2248,7 +2321,7 @@ elif [[ $1 == "verify" ]]; then
     if [[ -z $2 ]]; then
         verify
     elif [[ $2 == "-c" ]]; then
-        verify--c
+        verify--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2268,9 +2341,9 @@ elif [[ $1 == "encrypt_128" ]]; then
     if [[ -z $2 ]]; then
         encrypt_128
     elif [[ $2 == "-t" ]]; then
-        encrypt_128--t
+        encrypt_128--t "$@"
     elif [[ $2 == "-f" ]]; then
-        encrypt_128--f
+        encrypt_128--f "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2281,9 +2354,9 @@ elif [[ $1 == "encrypt_256" ]]; then
     if [[ -z $2 ]]; then
         encrypt_256
     elif [[ $2 == "-t" ]]; then
-        encrypt_256--t
+        encrypt_256--t "$@"
     elif [[ $2 == "-f" ]]; then
-        encrypt_256--f
+        encrypt_256--f "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2294,9 +2367,9 @@ elif [[ $1 == "decrypt_128" ]]; then
     if [[ -z $2 ]]; then
         decrypt_128
     elif [[ $2 == "-t" ]]; then
-        decrypt_128--t
+        decrypt_128--t "$@"
     elif [[ $2 == "-f" ]]; then
-        decrypt_128--f
+        decrypt_128--f "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2307,9 +2380,9 @@ elif [[ $1 == "decrypt_256" ]]; then
     if [[ -z $2 ]]; then
         decrypt_256
     elif [[ $2 == "-t" ]]; then
-        decrypt_256--t
+        decrypt_256--t "$@"
     elif [[ $2 == "-f" ]]; then
-        decrypt_256--f
+        decrypt_256--f "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2320,7 +2393,7 @@ elif [[ $1 == "keys" ]]; then
     if [[ -z $2 ]]; then
         keys
     elif [[ $2 == "-c" ]]; then
-        keys--c
+        keys--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2334,7 +2407,7 @@ elif [[ $1 == "hash-passwd" ]]; then
     if [[ -z $2 ]]; then
         hash-passwd
     elif [[ $2 == "-c" ]]; then
-        hash-passwd--c
+        hash-passwd--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2348,7 +2421,7 @@ elif [[ $1 == "hash" ]]; then
     if [[ -z $2 ]]; then
         hash-passwd
     elif [[ $2 == "-c" ]]; then
-        hash-passwd--c
+        hash-passwd--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2410,7 +2483,7 @@ elif [[ $1 == "remove_metadata" ]]; then
     if [[ -z $2 ]]; then
         remove_metadata
     elif [[ $2 == "-c" ]]; then
-        remove_metadata--c
+        remove_metadata--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2422,7 +2495,7 @@ elif [[ $1 == "metadata" ]]; then
     if [[ -z $2 ]]; then
         remove_metadata
     elif [[ $2 == "-c" ]]; then
-        remove_metadata--c
+        remove_metadata--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2434,7 +2507,7 @@ elif [[ $1 == "delete-file" ]]; then
     if [[ -z $2 ]]; then
         delete-file
     elif [[ $2 == "-c" ]]; then
-        delete-file--c
+        delete-file--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2445,8 +2518,8 @@ EOF
 elif [[ $1 == "empty_trash" ]]; then
     if [[ -z $2 ]]; then
         empty_trash
-    elif [[ $2 == "-c" ]]; then
-        empty_trash--s
+    elif [[ $2 == "-s" ]]; then
+        empty_trash--s "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2457,8 +2530,8 @@ EOF
 elif [[ $1 == "trash" ]]; then
     if [[ -z $2 ]]; then
         empty_trash
-    elif [[ $2 == "-c" ]]; then
-        empty_trash--s
+    elif [[ $2 == "-s" ]]; then
+        empty_trash--s "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2472,7 +2545,7 @@ elif [[ $1 == "generate-passwd" ]]; then
     if [[ -z $2 ]]; then
         generate-passwd
     elif [[ $2 == "-c" ]]; then
-        generate-passwd--c
+        generate-passwd--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2486,7 +2559,7 @@ elif [[ $1 == "password" ]]; then
     if [[ -z $2 ]]; then
         generate-passwd
     elif [[ $2 == "-c" ]]; then
-        generate-passwd--c
+        generate-passwd--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2500,7 +2573,7 @@ elif [[ $1 == "wipe-drive" ]]; then
     if [[ -z $2 ]]; then
         wipe-drive
     elif [[ $2 == "-c" ]]; then
-        wipe-drive--c
+        wipe-drive--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2536,7 +2609,7 @@ elif [[ $1 == "hide-dot" ]]; then
     if [[ -z $2 ]]; then
         hide_dot
     elif [[ $2 == "-c" ]]; then
-        hide_dot--c
+        hide_dot--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2548,7 +2621,7 @@ elif [[ $1 == "concatenation" ]]; then
     if [[ -z $2 ]]; then
         concatenation
     elif [[ $2 == "-c" ]]; then
-        concatenation--c
+        concatenation--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2563,9 +2636,9 @@ elif [[ $1 == "steganography" ]]; then
     if [[ -z $2 ]]; then
         steganography
     elif [[ $2 == "-d" ]]; then
-        steganography--d
+        steganography--d "$@"
     elif [[ $2 == "-e" ]]; then
-        steganography--e
+        steganography--e "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
@@ -2582,7 +2655,7 @@ elif [[ $1 == "check-hash" ]]; then
     if [[ -z $2 ]]; then
         check-hash
     elif [[ $2 == "-c" ]]; then
-        check-hash--C
+        check-hash--c "$@"
     else
         echo "Unknown option: $2"
         cat << 'EOF'
