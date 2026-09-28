@@ -4,7 +4,7 @@
 
 # Invisux
 
-[![Version](https://img.shields.io/badge/v1.2-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
+[![Version](https://img.shields.io/badge/v1..3-000000?style=for-the-badge)](https://codeberg.org/JasperC/Invisux/releases)
 [![License](https://img.shields.io/badge/GPL_v3.0-000000?style=for-the-badge&logo=gnu&logoColor=white)](./LICENSE)
 [![Language](https://img.shields.io/badge/Bash-000000?style=for-the-badge&logo=gnubash&logoColor=white)]()
 [![Platform](https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white)]()
@@ -113,12 +113,6 @@ Invisux requires **Gum** to run. All other dependencies are optional and are onl
 | lynis | Optional |
 
 ---
-
-
-## Hashes (sha256)
-1.0: 29203771b79aede98552b1d875f32d88d275cfba2ac12a2fed6728d57edf7e57  invisux-v1.0
-1.1: 6fd0653b1777a13a931eb2678991e9350a6e643bc104c0e87a2ebffaad9895da  Invisux
-1.2: 125f46938c1e339cfcc4d3f1b334a8c07ccbf435834b2e1de33933a6a840abf8  Invisux
 
 ---
 
