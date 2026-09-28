@@ -42,7 +42,6 @@ easter_egg="aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1FNFdsVVhySmd5NAo="
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
-GREEN="\e[32m"
 PURPLE="\e[38;5;99m"  
 BOLD="\e[1m"
 RESET="\e[0m"
