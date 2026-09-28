@@ -2595,14 +2595,3 @@ EOF
 else
     echo "Unknown command:  $1"
 fi 
-
-# normal TUI
-# -c CLI 
-# -s SILENT
-
-# Creators note: if you are reading this, thank you for checking out my script! Love you all <3
-# If you have any suggestions, improvements, or just want to say hi, feel free to reach out.
-# You can open an issue, discussion or pull request on the repository. I welcome all contributions and feedback.
-# Also you can contact me trough matrix: @whiteghost404:matrix.org
-
-# Thanks to all contributors and the creators of used dependencies.
