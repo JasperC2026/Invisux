@@ -105,16 +105,11 @@ if [[ $status == "yes" ]]; then
         sudo chmod +x "$dir/invisux"
         sudo cp "$dir/invisux" /usr/local/bin/invisux
     elif [[ $choice == "specific-version" ]]; then
-        read -rp "Options: V1.0/V1.1/V1.2" option
+        read -rp "Options: V1.0/V1.1/V1.2/V1.3" option
 
         case $option in
             V1.0)
             curl -Lo https://codeberg.org/JasperC/Invisux/releases/download/v1.0/invisux-v1.0
-            hash=$(sha256sum invisux-v1.0)
-            if [[ ! $hash == "29203771b79aede98552b1d875f32d88d275cfba2ac12a2fed6728d57edf7e57  invisux-v1.0" ]]; then
-                echo "Hashes do not match, please check the file"
-                return 0
-            fi
             install
             dir=$(pwd)
             sudo chmod +x "$dir/invisux-v1.0"
@@ -122,11 +117,6 @@ if [[ $status == "yes" ]]; then
             ;;
             V1.1)
             curl -Lo Invisux-bin https://codeberg.org/JasperC/Invisux/releases/download/v1.1/Invisux
-            hash=$(sha256sum Invisux-bin)
-            if [[ ! $hash == "6fd0653b1777a13a931eb2678991e9350a6e643bc104c0e87a2ebffaad9895da  Invisux-bin" ]]; then
-                echo "Hashes do not match, please check the file"
-                return 0
-            fi
             install
             dir=$(pwd)
             sudo chmod +x "$dir/Invisux-bin"
@@ -134,11 +124,13 @@ if [[ $status == "yes" ]]; then
             ;;
             V1.2)
             curl -Lo Invisux-bin https://codeberg.org/JasperC/Invisux/releases/download/v1.2/Invisux
-            hash=$(sha256sum Invisux-bin)
-            if [[ ! $hash == "125f46938c1e339cfcc4d3f1b334a8c07ccbf435834b2e1de33933a6a840abf8  Invisux-bin" ]]; then
-                echo "Hashes do not match, please check the file"
-                return 0
-            fi
+            install
+            dir=$(pwd)
+            sudo chmod +x "$dir/Invisux-bin"
+            sudo cp "$dir/Invisux-bin" /usr/local/bin/invisux
+            ;;
+            V1.3)
+            curl -Lo Invisux-bin https://codeberg.org/JasperC/Invisux/releases/download/v1.3/Invisux
             install
             dir=$(pwd)
             sudo chmod +x "$dir/Invisux-bin"
@@ -147,6 +139,7 @@ if [[ $status == "yes" ]]; then
             *)
                 return 0
             ;;
+
         esac
     elif [[ $choice == "source" ]]; then
         curl -LO https://codeberg.org/JasperC/Invisux/raw/branch/main/Invisux
