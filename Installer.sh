@@ -6,7 +6,7 @@
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 install() {
-            read -p "Select a package manager to install required dependencie (apt/dnf/pacman/brew/nix/flox/yum/zypper/go)" package
+            read -rp "Select a package manager to install required dependencie (apt/dnf/pacman/brew/nix/flox/yum/zypper/go)" package
         
         case $package in
             apt)
@@ -56,10 +56,10 @@ install() {
                 ;;
         esac
 
-        read -p "Install additional dependencies for all tools in this progam? (yes/no)" additional
+        read -rp "Install additional dependencies for all tools in this progam? (yes/no)" additional
 
         if [[ $additional == "yes" ]]; then
-            read -p "Select package manager (apt/dnf/pacman/other)" package_manager
+            read -rp "Select package manager (apt/dnf/pacman/other)" package_manager
 
             case $package_manager in
                 apt)
@@ -91,12 +91,12 @@ install() {
 echo "Invisux  Copyright (C) 2026  JasperC"
 echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions. See the license of the software."
 
-read -p "Do you accept the terms of using this program as specified in the license? (yes/no)" status
+read -rp "Do you accept the terms of using this program as specified in the license? (yes/no)" status
 
 if [[ $status == "yes" ]]; then
     cd ~/
 
-    read -p "What to install? (latest/specific-version/source/repo)" choice
+    read -rp "What to install? (latest/specific-version/source/repo)" choice
 
     if [[ $choice == "latest" ]]; then
         curl -LO  https://codeberg.org/JasperC/Invisux/releases/latest/download/invisux
@@ -105,7 +105,7 @@ if [[ $status == "yes" ]]; then
         sudo chmod +x "$dir/invisux"
         sudo cp "$dir/invisux" /usr/local/bin/invisux
     elif [[ $choice == "specific-version" ]]; then
-        read -p "Options: V1.0/V1.1/V1.2" option
+        read -rp "Options: V1.0/V1.1/V1.2" option
 
         case $option in
             V1.0)
