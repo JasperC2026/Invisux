@@ -94,7 +94,7 @@ echo "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and
 read -rp "Do you accept the terms of using this program as specified in the license? (yes/no)" status
 
 if [[ $status == "yes" ]]; then
-    cd ~/
+    cd ~/ || exit
 
     read -rp "What to install? (latest/specific-version/source/repo)" choice
 
