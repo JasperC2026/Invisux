@@ -82,7 +82,7 @@ install() {
                     echo "Install steghide + faker + openssl + dig + exifttool + lynis + shred + gpg with your package manager"
                 ;;
                 *)
-                    return o
+                    return 0
                 ;;
             esac
         fi
