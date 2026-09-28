@@ -38,23 +38,12 @@ dependencie_checker() {
 }
 
 # Variables
-DIVIDER="───────────────────────────────────────────────────────────────"
-status_negative="${RED}[!]${RESET}"
-status_positive="${GREEN}[✔]${RESET}"
-forward="${GREEN}[➜]${RESET}" 
-arrow="➜"
 easter_egg="aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1FNFdsVVhySmd5NAo="
 
 # Colors for ASCII art and use in output messages
 RED="\e[31m"
 GREEN="\e[32m"
-YELLOW="\e[93m"
-BLUE="\e[34m"
-CYAN="\e[36m"
-PURPLE="\e[38;5;99m"
-ORANGE="\e[38;5;208m"
-WHITE="\e[97m"    
-BLACK="\e[30m"   
+PURPLE="\e[38;5;99m"  
 BOLD="\e[1m"
 RESET="\e[0m"
 
